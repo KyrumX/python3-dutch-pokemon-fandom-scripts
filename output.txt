@@ -1,0 +1,494 @@
+{| class="wikitable sortable"  style="text-align: center; font-size: 90%"
+!
+! Engels
+! Type (1)
+! Type (2)
+!  Afbeelding
+ |-
+| 810
+| [[Grookey]]
+| {{Type|Gras}}
+| Geen
+| [[Bestand:810.png]]
+|-
+| 811
+| [[Thwackey]]
+| {{Type|Gras}}
+| Geen
+| [[Bestand:811.png]]
+|-
+| 812
+| [[Rillaboom]]
+| {{Type|Gras}}
+| Geen
+| [[Bestand:812.png]]
+|-
+| 813
+| [[Scorbunny]]
+| {{Type|Vuur}}
+| Geen
+| [[Bestand:813.png]]
+|-
+| 814
+| [[Raboot]]
+| {{Type|Vuur}}
+| Geen
+| [[Bestand:814.png]]
+|-
+| 815
+| [[Cinderace]]
+| {{Type|Vuur}}
+| Geen
+| [[Bestand:815.png]]
+|-
+| 816
+| [[Sobble]]
+| {{Type|Water}}
+| Geen
+| [[Bestand:816.png]]
+|-
+| 817
+| [[Drizzile]]
+| {{Type|Water}}
+| Geen
+| [[Bestand:817.png]]
+|-
+| 818
+| [[Inteleon]]
+| {{Type|Water}}
+| Geen
+| [[Bestand:818.png]]
+|-
+| 819
+| [[Skwovet]]
+| {{Type|Normaal}}
+| Geen
+| [[Bestand:819.png]]
+|-
+| 820
+| [[Greedent]]
+| {{Type|Normaal}}
+| Geen
+| [[Bestand:820.png]]
+|-
+| 821
+| [[Rookidee]]
+| {{Type|Vliegend}}
+| Geen
+| [[Bestand:821.png]]
+|-
+| 822
+| [[Corvisquire]]
+| {{Type|Vliegend}}
+| Geen
+| [[Bestand:822.png]]
+|-
+| 823
+| [[Corviknight]]
+| {{Type|Vliegend}}
+| {{Type|Staal}}
+| [[Bestand:823.png]]
+|-
+| 824
+| [[Blipbug]]
+| {{Type|Insect}}
+| Geen
+| [[Bestand:824.png]]
+|-
+| 825
+| [[Dottler]]
+| {{Type|Insect}}
+| {{Type|Psychisch}}
+| [[Bestand:825.png]]
+|-
+| 826
+| [[Orbeetle]]
+| {{Type|Insect}}
+| {{Type|Psychisch}}
+| [[Bestand:826.png]]
+|-
+| 827
+| [[Nickit]]
+| {{Type|Duister}}
+| Geen
+| [[Bestand:827.png]]
+|-
+| 828
+| [[Thievul]]
+| {{Type|Duister}}
+| Geen
+| [[Bestand:828.png]]
+|-
+| 829
+| [[Gossifleur]]
+| {{Type|Gras}}
+| Geen
+| [[Bestand:829.png]]
+|-
+| 830
+| [[Eldegoss]]
+| {{Type|Gras}}
+| Geen
+| [[Bestand:830.png]]
+|-
+| 831
+| [[Wooloo]]
+| {{Type|Normaal}}
+| Geen
+| [[Bestand:831.png]]
+|-
+| 832
+| [[Dubwool]]
+| {{Type|Normaal}}
+| Geen
+| [[Bestand:832.png]]
+|-
+| 833
+| [[Chewtle]]
+| {{Type|Water}}
+| Geen
+| [[Bestand:833.png]]
+|-
+| 834
+| [[Drednaw]]
+| {{Type|Water}}
+| {{Type|Steen}}
+| [[Bestand:834.png]]
+|-
+| 835
+| [[Yamper]]
+| {{Type|Elektrisch}}
+| Geen
+| [[Bestand:835.png]]
+|-
+| 836
+| [[Boltund]]
+| {{Type|Elektrisch}}
+| Geen
+| [[Bestand:836.png]]
+|-
+| 837
+| [[Rolycoly]]
+| {{Type|Steen}}
+| Geen
+| [[Bestand:837.png]]
+|-
+| 838
+| [[Carkol]]
+| {{Type|Steen}}
+| {{Type|Vuur}}
+| [[Bestand:838.png]]
+|-
+| 839
+| [[Coalossal]]
+| {{Type|Steen}}
+| {{Type|Vuur}}
+| [[Bestand:839.png]]
+|-
+| 840
+| [[Applin]]
+| {{Type|Gras}}
+| {{Type|Draak}}
+| [[Bestand:840.png]]
+|-
+| 841
+| [[Flapple]]
+| {{Type|Gras}}
+| {{Type|Draak}}
+| [[Bestand:841.png]]
+|-
+| 842
+| [[Appletun]]
+| {{Type|Gras}}
+| {{Type|Draak}}
+| [[Bestand:842.png]]
+|-
+| 843
+| [[Silicobra]]
+| {{Type|Grond}}
+| Geen
+| [[Bestand:843.png]]
+|-
+| 844
+| [[Sandaconda]]
+| {{Type|Grond}}
+| Geen
+| [[Bestand:844.png]]
+|-
+| 845
+| [[Cramorant]]
+| {{Type|Vliegend}}
+| {{Type|Water}}
+| [[Bestand:845.png]]
+|-
+| 846
+| [[Arrokuda]]
+| {{Type|Water}}
+| Geen
+| [[Bestand:846.png]]
+|-
+| 847
+| [[Barraskewda]]
+| {{Type|Water}}
+| Geen
+| [[Bestand:847.png]]
+|-
+| 848
+| [[Toxel]]
+| {{Type|Elektrisch}}
+| {{Type|Gif}}
+| [[Bestand:848.png]]
+|-
+| 849
+| [[Toxtricity]]
+| {{Type|Elektrisch}}
+| {{Type|Gif}}
+| [[Bestand:849.png]]
+|-
+| 850
+| [[Sizzlipede]]
+| {{Type|Vuur}}
+| {{Type|Insect}}
+| [[Bestand:850.png]]
+|-
+| 851
+| [[Centiskorch]]
+| {{Type|Vuur}}
+| {{Type|Insect}}
+| [[Bestand:851.png]]
+|-
+| 852
+| [[Clobbopus]]
+| {{Type|Vecht}}
+| Geen
+| [[Bestand:852.png]]
+|-
+| 853
+| [[Grapploct]]
+| {{Type|Vecht}}
+| Geen
+| [[Bestand:853.png]]
+|-
+| 854
+| [[Sinistea]]
+| {{Type|Geest}}
+| Geen
+| [[Bestand:854.png]]
+|-
+| 855
+| [[Polteageist]]
+| {{Type|Geest}}
+| Geen
+| [[Bestand:855.png]]
+|-
+| 856
+| [[Hatenna]]
+| {{Type|Psychisch}}
+| Geen
+| [[Bestand:856.png]]
+|-
+| 857
+| [[Hattrem]]
+| {{Type|Psychisch}}
+| Geen
+| [[Bestand:857.png]]
+|-
+| 858
+| [[Hatterene]]
+| {{Type|Psychisch}}
+| {{Type|Fee}}
+| [[Bestand:858.png]]
+|-
+| 859
+| [[Impidimp]]
+| {{Type|Duister}}
+| {{Type|Fee}}
+| [[Bestand:859.png]]
+|-
+| 860
+| [[Morgrem]]
+| {{Type|Duister}}
+| {{Type|Fee}}
+| [[Bestand:860.png]]
+|-
+| 861
+| [[Grimmsnarl]]
+| {{Type|Duister}}
+| {{Type|Fee}}
+| [[Bestand:861.png]]
+|-
+| 862
+| [[Obstagoon]]
+| {{Type|Duister}}
+| {{Type|Normaal}}
+| [[Bestand:862.png]]
+|-
+| 863
+| [[Perrserker]]
+| {{Type|Staal}}
+| Geen
+| [[Bestand:863.png]]
+|-
+| 864
+| [[Cursola]]
+| {{Type|Geest}}
+| Geen
+| [[Bestand:864.png]]
+|-
+| 865
+| [[Sirfetch'd]]
+| {{Type|Vecht}}
+| Geen
+| [[Bestand:865.png]]
+|-
+| 866
+| [[Mr. Rime]]
+| {{Type|IJs}}
+| {{Type|Psychisch}}
+| [[Bestand:866.png]]
+|-
+| 867
+| [[Runerigus]]
+| {{Type|Grond}}
+| {{Type|Geest}}
+| [[Bestand:867.png]]
+|-
+| 868
+| [[Milcery]]
+| {{Type|Fee}}
+| Geen
+| [[Bestand:868.png]]
+|-
+| 869
+| [[Alcremie]]
+| {{Type|Fee}}
+| Geen
+| [[Bestand:869.png]]
+|-
+| 870
+| [[Falinks]]
+| {{Type|Vecht}}
+| Geen
+| [[Bestand:870.png]]
+|-
+| 871
+| [[Pincurchin]]
+| {{Type|Elektrisch}}
+| Geen
+| [[Bestand:871.png]]
+|-
+| 872
+| [[Snom]]
+| {{Type|IJs}}
+| {{Type|Insect}}
+| [[Bestand:872.png]]
+|-
+| 873
+| [[Frosmoth]]
+| {{Type|IJs}}
+| {{Type|Insect}}
+| [[Bestand:873.png]]
+|-
+| 874
+| [[Stonjourner]]
+| {{Type|Steen}}
+| Geen
+| [[Bestand:874.png]]
+|-
+| 875
+| [[Eiscue]]
+| {{Type|IJs}}
+| Geen
+| [[Bestand:875.png]]
+|-
+| 876
+| [[Indeedee]]
+| {{Type|Psychisch}}
+| {{Type|Normaal}}
+| [[Bestand:876.png]]
+|-
+| 877
+| [[Morpeko]]
+| {{Type|Elektrisch}}
+| {{Type|Duister}}
+| [[Bestand:877.png]]
+|-
+| 878
+| [[Cufant]]
+| {{Type|Staal}}
+| Geen
+| [[Bestand:878.png]]
+|-
+| 879
+| [[Copperajah]]
+| {{Type|Staal}}
+| Geen
+| [[Bestand:879.png]]
+|-
+| 880
+| [[Dracozolt]]
+| {{Type|Elektrisch}}
+| {{Type|Draak}}
+| [[Bestand:880.png]]
+|-
+| 881
+| [[Arctozolt]]
+| {{Type|Elektrisch}}
+| {{Type|IJs}}
+| [[Bestand:881.png]]
+|-
+| 882
+| [[Dracovish]]
+| {{Type|Water}}
+| {{Type|Draak}}
+| [[Bestand:882.png]]
+|-
+| 883
+| [[Arctovish]]
+| {{Type|Water}}
+| {{Type|IJs}}
+| [[Bestand:883.png]]
+|-
+| 884
+| [[Duraludon]]
+| {{Type|Staal}}
+| {{Type|Draak}}
+| [[Bestand:884.png]]
+|-
+| 885
+| [[Dreepy]]
+| {{Type|Draak}}
+| {{Type|Geest}}
+| [[Bestand:885.png]]
+|-
+| 886
+| [[Drakloak]]
+| {{Type|Draak}}
+| {{Type|Geest}}
+| [[Bestand:886.png]]
+|-
+| 887
+| [[Dragapult]]
+| {{Type|Draak}}
+| {{Type|Geest}}
+| [[Bestand:887.png]]
+|-
+| 888
+| [[Zacian]]
+| {{Type|Fee}}
+| Geen
+| [[Bestand:888.png]]
+|-
+| 889
+| [[Zamazenta]]
+| {{Type|Vecht}}
+| Geen
+| [[Bestand:889.png]]
+|-
+| 890
+| [[Eternatus]]
+| {{Type|Gif}}
+| {{Type|Draak}}
+| [[Bestand:890.png]]
+|-
+|}

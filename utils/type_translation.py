@@ -1,0 +1,21 @@
+ENGLISH_TO_DUTCH = {
+    "normal": "Normaal",
+    "fire": "Vuur",
+    "water": "Water",
+    "grass": "Gras",
+    "electric": "Elektrisch",
+    "psychic": "Psychisch",
+    "ice": "IJs",
+    "dragon": "Draak",
+    "dark": "Duister",
+    "fairy": "Fee",
+    "fighting": "Vecht",
+    "flying": "Vliegend",
+    "poison": "Gif",
+    "ground": "Grond",
+    "rock": "Steen",
+    "bug": "Insect",
+    "ghost": "Geest",
+    "steel": "Staal",
+    "???": "???"
+}
