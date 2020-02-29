@@ -3,11 +3,13 @@ Some scripts which are useful to generate data/templates for the Dutch Pokémon 
 
 ## Scripts:
 
+Be sure to install the requirements.txt !
+
 The `nl_pkmn_fandom_list_generator` script can be used to generate a generation [Pokémon lists](https://pokemon.fandom.com/nl/wiki/Lijst_van_Pok%C3%A9mon), possible types (sources): Serebii 
 
-`python3 nl_pkmn_fandom_list_generator.py -url {the url}`
+`python3 nl_pkmn_fandom_list_generator.py -url {the url}
 
-Sample output:
+Sample output for `python3 nl_pkmn_fandom_list_generator.py -url https://www.serebii.net/pokemon/gen7pokemon.shtml`:
 ```
 {| class="wikitable sortable"  style="text-align: center; font-size: 90%"
 !
