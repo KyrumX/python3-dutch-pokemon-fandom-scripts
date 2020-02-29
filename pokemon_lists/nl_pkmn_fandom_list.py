@@ -4,7 +4,7 @@ from utils.pokemon import Pokemon
 class DutchPokemonFandomPokemonList:
 
     prefix = "{| class=\"wikitable sortable\"  style=\"text-align: center; font-size: 90%\"\n!\n! Engels\n! Type (" \
-             "1)\n! Type (2)\n!  Afbeelding\n "
+             "1)\n! Type (2)\n!  Afbeelding\n"
     suffix = "|-\n|}"
 
     def __init__(self):
