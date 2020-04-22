@@ -82,30 +82,93 @@ class PokedexEntryParserPokemonDB(PokedexEntryParser):
         # Extract the ndex number
         return int(tr.find("td").text)
 
+    def _parse_pokemon_evo_line(self):
+        # Evolution data can be found in a chart form, we need to import it fully
+        # We also need to consider that some Pokémon can evolve into 2 different Pokémon depending on conditions
+        # TODO: Now, Eevee is a real pain since it can evolve into MANY MANY different Pokémon
+
+        splits = self.structured_object.find_all('span', class_="infocard-evo-split")
+        if len(splits) == 1:
+            pass
+        elif len(splits) > 1:
+            # CHECK FOR DUPLICATES, MON WTIH DIFFERENT FORMS
+            print("EEVEE/Burmy")
+        else:
+            # Normal evolution line
+            evo_line = []
+            info_card_list = self.structured_object.find('div', class_="infocard-list-evo")
+
+            # Check if this Pokémon even has an evolution line
+            if info_card_list is None:
+                return [None, None]
+            evo_steps = info_card_list.find_all('div', class_="infocard")
+            for evo_step in evo_steps:
+                evo_line.append(evo_step.find('span', class_='infocard-lg-data text-muted').find('a', class_="ent-name").text)
+            evo_position = evo_line.index(self.parse_pokemon_name())
+            if evo_position == 0:
+                return [None, evo_line[1]]
+            elif 0 < evo_position < len(evo_line) - 1:
+                return [evo_line[evo_position - 1], evo_line[evo_position + 1]]
+            else:
+                return [evo_line[evo_position - 1], None]
+
     def parse_pokemon_evo_in(self):
-        pass
+        return self._parse_pokemon_evo_line()[1]
 
     def parse_pokemon_evo_from(self):
-        pass
+        return self._parse_pokemon_evo_line()[0]
 
     def parse_pokemon_gender(self):
-        pass
+        # Returns the % of male or 'Geslachtloos'
+
+        # Grab the gender value from the td under the 'Gender' th
+        gender = self.structured_object.find("th", text="Gender").find_next_sibling("td").text
+
+        if gender == "Genderless":
+            return "Geslachtloos"
+        else:
+            # We only need to return the male value in string representation, split after first '%' and return
+            return gender.split("%", 1)[0]
 
     def parse_pokemon_met_height(self):
-        pass
+        # Grab the height value from the td under the 'Height' th
+        height = self.structured_object.find("th", text="Height").find_next_sibling("td").text
+
+        # Height contains both met and imp, so we need to extract the metric value
+        return height.split()[0]
 
     def parse_pokemon_met_weight(self):
-        pass
+        # Grab the height value from the td under the 'Height' th
+        height = self.structured_object.find("th", text="Weight").find_next_sibling("td").text
+
+        # Weight contains both met and imp, so we need to extract the metric value
+        return height.split()[0]
 
     def parse_pokemon_imp_height(self):
-        pass
+        # Grab the height value from the td under the 'Height' th
+        height = self.structured_object.find("th", text="Height").find_next_sibling("td").text
+
+        # Height contains both met and imp, so we need to extract the imperial value
+        return height.split("(")[1].replace(")", "")
 
     def parse_pokemon_imp_weight(self):
-        pass
+        # Grab the weight value from the td under the 'Weight' th
+        weight = self.structured_object.find("th", text="Height").find_next_sibling("td").text
+
+        # Weight contains both met and imp, so we need to extract the imperial value
+        return weight.split("(")[1].replace(")", "")
 
     def parse_pokemon_dex_color(self):
-        pass
+        # Color is not stored on PokémonDB
+        return ""
 
     def parse_pokemon_egg_groups(self):
-        pass
+        # Grab the ergg groups value from the td under the 'Egg Groups' th
+        egg_groups = self.structured_object.find("th", text="Egg Groups").find_next_sibling("td")
+
+        groups = egg_groups.find_all('a', recursive=False)
+        if len(groups) == 1:
+            return [groups[0].text]
+        else:
+            return [groups[0].text, groups[1].text]
 
