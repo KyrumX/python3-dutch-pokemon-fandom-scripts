@@ -71,6 +71,14 @@ class PokedexEntryParser(abc.ABC):
         pass
 
     @abstractmethod
+    def parse_pokemon_national_dex_next(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_national_dex_previous(self):
+        pass
+
+    @abstractmethod
     def parse_pokemon_evo_in(self):
         pass
 

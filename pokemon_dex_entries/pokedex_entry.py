@@ -12,6 +12,8 @@ class PokedexEntry:
                  abilities: list,
                  hidden_ability: list,
                  ndex_num: int,
+                 ndex_next: str,
+                 ndex_prev: str,
                  evo_in: str,
                  evo_from: str,
                  percent_male: int,

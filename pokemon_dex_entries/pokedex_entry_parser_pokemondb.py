@@ -64,6 +64,24 @@ class PokedexEntryParserPokemonDB(PokedexEntryParser):
         # Grab the Ndex value from the td under the 'National №' th
         return int(self.structured_object.find("th", text="National №").find_next_sibling("td").text)
 
+    def parse_pokemon_national_dex_next(self):
+        # First check if there is a next ndex Pokemon
+        ndex_next = self.structured_object.find("a", class_="entity-nav-next")
+
+        if ndex_next:
+            # Remove the ndex number and keep only the name
+            return ndex_next.text.strip(" ", 1)[1]
+        return None
+
+    def parse_pokemon_national_dex_previous(self):
+        # First check if there is a previous ndex Pokemon
+        ndex_previous = self.structured_object.find("a", class_="entity-nav-prev")
+
+        if ndex_previous:
+            # Remove the ndex number and keep only the name
+            return ndex_previous.text.strip(" ", 1)[1]
+        return None
+
     def _parse_pokemon_evo_line(self):
         # Evolution data can be found in a chart form, we need to import it fully
         # We also need to consider that some Pokémon can evolve into 2 different Pokémon depending on conditions
