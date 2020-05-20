@@ -2,10 +2,12 @@ import argparse
 
 import importlib
 
-from pokemon_lists.list_scraper_factory import ListScraperFactory
+from pokemon_dex_entries.pokedex_entry_factory import PokedexEntryFactory
 
 
 def main():
+
+    print("???")
 
     parser = argparse.ArgumentParser(description='Scrape a website and convert the data to a pokedex entry format '
                                                  'usable by the Dutch Pokémon fandom/.')
@@ -15,18 +17,17 @@ def main():
 
     args = parser.parse_args()
 
-    scraper_class = ListScraperFactory().create(source_type=args.type, url=args.url)
+    scraper_class = PokedexEntryFactory().create(source_type=args.type, url=args.url)
 
     try:
-        formatted_fandom_list = scraper_class.scrape()
+        pokedex_entry = scraper_class.build_pokedex_entry()
 
-        text_file = open("output.txt", "w")
-        text_file.write(formatted_fandom_list)
-        text_file.close()
+        print(pokedex_entry.convert_to_dutch_wiki_template())
 
         print("Done! Dutch Fandom formatted text can be found in output.txt")
 
     except Exception as e:
+        print(e)
         print("Something went wrong during scraping, the source site may have changed its format.")
 
 if __name__ == "__main__":

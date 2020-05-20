@@ -2,18 +2,35 @@
 #  All rights reserved.
 
 from pokemon_dex_entries.pokedex_entry_parser import PokedexEntryParser
+from utils.egg_groups_translation import ENGLISH_TO_DUTCH_EGG_GROUP
 from utils.gen_translation import ENGLISH_TO_DUTCH_GEN
 from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
 
 
 class PokedexEntryParserPokemonDB(PokedexEntryParser):
     def parse_pokemon_name(self):
-        # Grab the Name value from the td under the 'English' th
-        return self.structured_object.find("th", text="English").find_next_sibling("td").text
+        # Some pages aren't updated yet with a names table, so if the names table isn't present we
+        # need to grab h1 for name
+
+        # Check if name table
+        english_name_th = self.structured_object.find("th", text="English")
+
+        if english_name_th:
+            # Grab the Name value from the td under the 'English' th
+            return english_name_th.find_next_sibling("td").text
+        else:
+            return self.structured_object.find("h1").text
 
     def parse_pokemon_japanese_name(self):
+        # Some pages aren't updated yet with a names table, so if the names table isn't present we
+        # need to skip the japanese name, unfortunately
+
         # Grab the Japanese Name value from the td under the 'English' th
-        return self.structured_object.find("th", text="Japanese").find_next_sibling("td").text
+        japanese_name_th = self.structured_object.find("th", text="Japanese")
+        if japanese_name_th:
+            return japanese_name_th.find_next_sibling("td").text
+        else:
+            return None
 
     def parse_pokemon_generation(self):
         # The generation number can be found in the first abbr element
@@ -70,7 +87,7 @@ class PokedexEntryParserPokemonDB(PokedexEntryParser):
 
         if ndex_next:
             # Remove the ndex number and keep only the name
-            return ndex_next.text.strip(" ", 1)[1]
+            return ndex_next.text.split(" ", 1)[1]
         return None
 
     def parse_pokemon_national_dex_previous(self):
@@ -79,7 +96,7 @@ class PokedexEntryParserPokemonDB(PokedexEntryParser):
 
         if ndex_previous:
             # Remove the ndex number and keep only the name
-            return ndex_previous.text.strip(" ", 1)[1]
+            return ndex_previous.text.split(" ", 1)[1]
         return None
 
     def _parse_pokemon_evo_line(self):
@@ -267,7 +284,7 @@ class PokedexEntryParserPokemonDB(PokedexEntryParser):
         gender = self.structured_object.find("th", text="Gender").find_next_sibling("td").text
 
         if gender == "Genderless":
-            return "Geslachtloos"
+            return None
         else:
             # We only need to return the male value in string representation, split after first '%' and return
             return gender.split("%", 1)[0]
@@ -310,7 +327,6 @@ class PokedexEntryParserPokemonDB(PokedexEntryParser):
 
         groups = egg_groups.find_all('a', recursive=False)
         if len(groups) == 1:
-            return [groups[0].text]
+            return [ENGLISH_TO_DUTCH_EGG_GROUP[groups[0].text]]
         else:
-            return [groups[0].text, groups[1].text]
-
+            return [ENGLISH_TO_DUTCH_EGG_GROUP[groups[0].text], ENGLISH_TO_DUTCH_EGG_GROUP[groups[1].text]]\
