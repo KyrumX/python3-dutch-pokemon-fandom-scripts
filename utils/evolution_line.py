@@ -4,7 +4,6 @@
 
 class EvolutionStep(object):
     """An step in an evolution line"""
-    # TODO: EVO_STAGE CAN BE REMOVED AND REPLACED BY A FUNCTION
 
     def __init__(self,
                  pokemon_name: str):

@@ -7,4 +7,12 @@ ENGLISH_TO_DUTCH_GEN = {
     "Generation 6": "Generatie VI",
     "Generation 7": "Generatie VII",
     "Generation 8": "Generatie VIII",
+    "Generation I": "Generatie I",
+    "Generation II": "Generatie II",
+    "Generation III": "Generatie III",
+    "Generation IV": "Generatie IV",
+    "Generation V": "Generatie V",
+    "Generation VI": "Generatie VI",
+    "Generation VII": "Generatie VII",
+    "Generation VIII": "Generatie VIII",
 }
