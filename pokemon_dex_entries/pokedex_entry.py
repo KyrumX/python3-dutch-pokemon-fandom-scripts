@@ -1,8 +1,11 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
+from utils.evolution_line import EvolutionLine
 
 
 class PokedexEntry:
+
+    # TODO: FIX EVOLUTION LINE PARSING
 
     def __init__(self,
                  name:  str,
@@ -16,8 +19,7 @@ class PokedexEntry:
                  ndex_num: int,
                  ndex_next: str,
                  ndex_prev: str,
-                 evo_in: str,
-                 evo_from: str,
+                 evo_line: EvolutionLine,
                  percent_male: int,
                  met_height: float,
                  met_weight: float,
@@ -35,8 +37,7 @@ class PokedexEntry:
         self.ndex_num = ndex_num
         self.ndex_next = ndex_next
         self.ndex_prev = ndex_prev
-        self.evo_in = evo_in
-        self.evo_from = evo_from
+        self.evo_line = EvolutionLine
         self.percent_male = percent_male
         self.met_height = met_height
         self.met_weight = met_weight

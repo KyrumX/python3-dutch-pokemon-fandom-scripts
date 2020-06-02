@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from googletrans import Translator
 
 from pokemon_dex_entries.pokedex_entry import PokedexEntry
+from utils.evolution_line import EvolutionLine
 
 
 class PokedexEntryParser(abc.ABC):
@@ -31,8 +32,7 @@ class PokedexEntryParser(abc.ABC):
             self.parse_pokemon_national_dex_number(),
             self.parse_pokemon_national_dex_next(),
             self.parse_pokemon_national_dex_previous(),
-            self.parse_pokemon_evo_in(),
-            self.parse_pokemon_evo_from(),
+            self.parse_pokemon_evo_line(),
             self.parse_pokemon_gender(),
             self.parse_pokemon_met_height(),
             self.parse_pokemon_met_weight(),
@@ -82,11 +82,7 @@ class PokedexEntryParser(abc.ABC):
         pass
 
     @abstractmethod
-    def parse_pokemon_evo_in(self):
-        pass
-
-    @abstractmethod
-    def parse_pokemon_evo_from(self):
+    def parse_pokemon_evo_line(self) -> EvolutionLine:
         pass
 
     @abstractmethod
