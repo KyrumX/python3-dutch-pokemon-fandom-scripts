@@ -8,6 +8,11 @@ from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
 
 
 class PokedexEntryParserPokemonDB(PokedexEntryParser):
+
+    def __init__(self, url: str):
+        super().__init__(url)
+        raise Exception("OUTDATED")
+
     def parse_pokemon_name(self):
         # Some pages aren't updated yet with a names table, so if the names table isn't present we
         # need to grab h1 for name
@@ -327,6 +332,6 @@ class PokedexEntryParserPokemonDB(PokedexEntryParser):
 
         groups = egg_groups.find_all('a', recursive=False)
         if len(groups) == 1:
-            return [ENGLISH_TO_DUTCH_EGG_GROUP[groups[0].text]]
+            return [ENGLISH_TO_DUTCH_EGG_GROUP[groups[0].text.lower()]]
         else:
-            return [ENGLISH_TO_DUTCH_EGG_GROUP[groups[0].text], ENGLISH_TO_DUTCH_EGG_GROUP[groups[1].text]]\
+            return [ENGLISH_TO_DUTCH_EGG_GROUP[groups[0].text.lower()], ENGLISH_TO_DUTCH_EGG_GROUP[groups[1].text.lower()]]

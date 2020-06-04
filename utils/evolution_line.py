@@ -10,7 +10,7 @@ class EvolutionStep(object):
         self.pokemon_name = pokemon_name
         self.next = []
 
-    def _add_next(self, evolution_step):
+    def add_next(self, evolution_step):
         self.next.append(evolution_step)
 
 
@@ -29,6 +29,13 @@ class EvolutionLine:
             result = EvolutionLine._find_evolution_step(next_evultion, pokemon_name)
             if result:
                 return result
+
+    def combine_evo_lines(self, second_evo_line):
+        # TODO: !!!
+        if self.first.pokemon_name != second_evo_line.first.pokemon_name:
+            raise Exception("Not the same base!")
+
+
 
     def _create_pretty_evolution_line(self):
         raise NotImplementedError()

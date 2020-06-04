@@ -10,7 +10,7 @@ def str_list_to_dict(l: list, split_str: str) -> dict:
 
     for x in l:
         if not len(x) == 0 and not x is None:
-            splitted = x.split(split_str)
+            splitted = x.split(split_str, 1)
             dict[splitted[0]] = splitted[1]
 
     return dict

@@ -1,12 +1,13 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
 import re
-import regex
 
 from pokemon_dex_entries.pokedex_entry_parser import PokedexEntryParser
+from utils.color_translation import ENGLISH_TO_DUTCH_COLOR
 from utils.egg_groups_translation import ENGLISH_TO_DUTCH_EGG_GROUP
-from utils.evolution_line import EvolutionLine
+from utils.evolution_line import EvolutionLine, EvolutionStep
 from utils.gen_translation import ENGLISH_TO_DUTCH_GEN
+from utils.gender_conversion import GENDER_DECIMAL_TO_MALE_PERCENTAGE
 from utils.list_to_dict import str_list_to_dict
 from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
 
@@ -53,24 +54,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         # Pattern to grab all evo boxes if there are multiple
         regex_pattern_individual_evo_boxes = r"{{Evobox(.*)}}\n"
 
-        # We further want to split at every | (because it indicates a new dict pair), however: sometimes the dict pair
-        #   value has a nested |, always used between {{ and }}, example: |evo1:{{...|...}}, we dont want to split at
-        #   the 2nd | char, since its part of a value rather than a new key/value.
-        #   Luckily Matthew Barnett's Regex library supports infinite lookbehinds, which is what is needed!
-        #   \| --> matches the character | literally
-        #   (?<!{{.*|) --> Negative lookbehind, so exclude any | character when preceded by: {{ and infinite chars .*
-        #   (?!\|.*}}) --> Negative Lookahead, so exclude any | char if it is followed by infinite chars and }}
-        #   Note that the the infinite chars in the lookbehind is not possible in a lot of regex engines, including
-        #   the built in Python one, that is why I use the one made my Matthew Barnett.
-        split_at_vertical_bar_except_when_between_brackets = r'\|(?<!{{.*\|)(?!\|.*}})'
-
-        raw_pokemon_evolution_lines = re.findall(regex_pattern_individual_evo_boxes, evolution_box, re.IGNORECASE)
-        self.pokemon_evolution_lines = []
-        for raw_pokemon_evolution_line in raw_pokemon_evolution_lines:
-            temp = raw_pokemon_evolution_line.split("|", 1)[1]
-            splitted = regex.split(split_at_vertical_bar_except_when_between_brackets, temp)
-            splitted_to_dict = str_list_to_dict(splitted, "=")
-            self.pokemon_evolution_lines.append(splitted_to_dict)
+        self.raw_pokemon_evolution_lines = re.findall(regex_pattern_individual_evo_boxes, evolution_box, re.IGNORECASE)
 
         # Bulbapedia uses "=" to split between the key and value
         self.infobox_dict = str_list_to_dict(info_box, "=")
@@ -148,41 +132,132 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
     def parse_pokemon_evo_line(self) -> EvolutionLine:
         # The evolution line is a bit of work: the format changes sometimes (probably depending on the writers preference)
         # Some Pokémon dont have code for their evo lines present because bulbapedia deemed it too complex, so they
-        #   have special cases, these are: Eevee, Tyrogue, (these special case arent implemented yet here)
-        # Like stated above, no strict format, but the basic formats are:
+        #   have special cases, these are: Eevee, Tyrogue, (these special case aren't implemented yet here)
+        # Like stated above, the format changes sometimes, e.g. sometimes name2 is first, other times name2a
         #   name1 --> name2 --> name3
         #   name1 --> name2 / name2a
         #   name1 --> name2 --> name3 / name3a
         #   name1 --> name2a / name2b
-        # Notice how the 2nd and 4th are basically the same, but one uses name2 / name2a VS name2a / name2b
-        skip = ["Eevee", "Tyrogue"]
-        key = ["name"]
-        sub_keys = ["a", "b"]
+        # Notice how the 2nd and 4th are basically the same, but one uses [name2 / name2a] VS [name2a / name2b]
+        skip = ["Eevee", "Tyrogue", "Wurmple"]
+
+        base = None
+        evo_lines = []
+
+        raw_evo_lines = []
+        evo_keys = ["name{}", "name{}a", "name{}b"]
+
+        for raw_pokemon_evolution_line in self.raw_pokemon_evolution_lines:
+            temp = raw_pokemon_evolution_line.split("|", 1)[1]
+            dict = {}
+            for i in range(1, 5):
+                for key in evo_keys:
+                    formatted_key = key.format(str(i))
+                    pattern = r"\b" + re.escape(formatted_key) + r"\b"
+                    if re.search(pattern, temp):
+                        index = temp.index(formatted_key)
+                        index += len(formatted_key) + 1
+                        key_value = ""
+                        while temp[index] != "|":
+                            key_value += temp[index]
+                            index += 1
+                        dict[formatted_key] = key_value
+            raw_evo_lines.append(dict)
 
         if not self.parse_pokemon_name() in skip:
-            for evo_line in self.pokemon_evolution_lines:
-                for evo_step in range(1, 5):
-                    pass
+            for evo_line in raw_evo_lines:
+                print(evo_line)
+                current = None
+                current_base = None
+                for index_step in range(1, 5):
+                    if base is None:
+                        base = EvolutionStep(
+                            pokemon_name=evo_line["name1"]
+                        )
+                        current = base
+                        current_base = current
+                    elif index_step == 1:
+                        current = EvolutionStep(
+                            pokemon_name=evo_line["name1"]
+                        )
+                        current_base = current
+                    else:
+                        latest = None
+                        for key in evo_keys:
+                            formatted_key = key.format(str(index_step))
+                            print(formatted_key)
+                            if formatted_key in evo_line:
+                                print("adding!")
 
+                                # First check if it isn't the same Pokémon we are adding, since Bulbapedia adds
+                                #   new evo steps for different forms, even though the Pokémon name doesn't change
+                                duplicate = False
+                                for pkmn in current.next:
+                                    if evo_line[formatted_key] == pkmn.pokemon_name:
+                                        duplicate = True
 
+                                if not duplicate:
+                                    new_step = EvolutionStep(
+                                        pokemon_name=evo_line[formatted_key]
+                                    )
+                                    current.add_next(new_step)
+                                    latest = new_step
+                        if latest:
+                            current = latest
+                evo_lines.append(current_base)
+        else:
+            return None
+
+        # Create the evolution line object
+        #   Main evolution line is the first one
+        main_evo_line = EvolutionLine(evo_lines[0])
+        evo_lines.pop(0)
+
+        # Now compare them, sometimes they are exactly the same since bulbapedia will add a new one for every form
+        for evo_line in evo_lines:
+            pass
+
+        return main_evo_line
 
     def parse_pokemon_gender(self):
-        pass
+        # Grab the Pokémon decimal gender code, found inside the infobox dict, convert to male%
+        # key: "gendercode"
+        return GENDER_DECIMAL_TO_MALE_PERCENTAGE[int(self.infobox_dict["gendercode"])]
 
-    def parse_pokemon_met_height(self):
-        pass
+    def parse_pokemon_met_height(self) -> str:
+        # Grab the Pokémon height in meters
+        # key: "height-m"
+        return self.infobox_dict["height-m"]
 
-    def parse_pokemon_met_weight(self):
-        pass
+    def parse_pokemon_met_weight(self) -> str:
+        # Grab the Pokémon height in kilograms
+        # key: "weight-kg"
+        return self.infobox_dict["weight-kg"]
 
-    def parse_pokemon_imp_height(self):
-        pass
+    def parse_pokemon_imp_height(self) -> str:
+        # Grab the Pokémon height in float inch
+        # key: "height-ftin"
+        return self.infobox_dict["height-ftin"]
 
-    def parse_pokemon_imp_weight(self):
-        pass
+    def parse_pokemon_imp_weight(self) -> str:
+        # Grab the Pokémon height in float inch
+        # key: "weight-lbs"
+        return self.infobox_dict["weight-lbs"]
 
     def parse_pokemon_dex_color(self):
-        pass
+        # Grab the Pokémon dex color
+        # key: "color"
+        return ENGLISH_TO_DUTCH_COLOR[self.infobox_dict["color"].lower()]
 
     def parse_pokemon_egg_groups(self):
-        pass
+
+        egg_groups_n = int(self.infobox_dict["egggroupn"])
+
+        if egg_groups_n == 0:
+            return ENGLISH_TO_DUTCH_EGG_GROUP["Undiscovered"]
+        elif egg_groups_n == 1:
+            return [ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup1"].lower()]]
+        else:
+            return [ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup1"].lower()],
+                    ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup2"].lower()]]
+
