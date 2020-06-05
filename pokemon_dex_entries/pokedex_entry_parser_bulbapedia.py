@@ -139,7 +139,9 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         #   name1 --> name2 --> name3 / name3a
         #   name1 --> name2a / name2b
         # Notice how the 2nd and 4th are basically the same, but one uses [name2 / name2a] VS [name2a / name2b]
-        skip = ["Eevee", "Tyrogue", "Wurmple"]
+        skip = ["Eevee", "Tyrogue"]
+
+        #TODO: FIX WURMPLE?
 
         base = None
         evo_lines = []
@@ -172,13 +174,15 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
                 for index_step in range(1, 5):
                     if base is None:
                         base = EvolutionStep(
-                            pokemon_name=evo_line["name1"]
+                            pokemon_name=evo_line["name1"],
+                            evo_stage=1
                         )
                         current = base
                         current_base = current
                     elif index_step == 1:
                         current = EvolutionStep(
-                            pokemon_name=evo_line["name1"]
+                            pokemon_name=evo_line["name1"],
+                            evo_stage=1
                         )
                         current_base = current
                     else:
@@ -198,7 +202,8 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
 
                                 if not duplicate:
                                     new_step = EvolutionStep(
-                                        pokemon_name=evo_line[formatted_key]
+                                        pokemon_name=evo_line[formatted_key],
+                                        evo_stage=index_step
                                     )
                                     current.add_next(new_step)
                                     latest = new_step
@@ -215,7 +220,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
 
         # Now compare them, sometimes they are exactly the same since bulbapedia will add a new one for every form
         for evo_line in evo_lines:
-            pass
+            main_evo_line.combine_evo_lines(evo_line)
 
         return main_evo_line
 
@@ -250,7 +255,8 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         return ENGLISH_TO_DUTCH_COLOR[self.infobox_dict["color"].lower()]
 
     def parse_pokemon_egg_groups(self):
-
+        # Grab the Pokémon egg group(s)
+        # key: "egggroupn" for the amount, "egggroup1" and "egggroup2" (if n == 2)
         egg_groups_n = int(self.infobox_dict["egggroupn"])
 
         if egg_groups_n == 0:
