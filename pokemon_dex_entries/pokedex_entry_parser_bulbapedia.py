@@ -129,100 +129,235 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         if "prev" in self.prev_next_dict and self.prev_next_dict["nextnum"] != "002":
             return self.prev_next_dict["prev"]
 
-    def parse_pokemon_evo_line(self) -> EvolutionLine:
-        # The evolution line is a bit of work: the format changes sometimes (probably depending on the writers preference)
-        # Some Pokémon dont have code for their evo lines present because bulbapedia deemed it too complex, so they
-        #   have special cases, these are: Eevee, Tyrogue, (these special case aren't implemented yet here)
-        # Like stated above, the format changes sometimes, e.g. sometimes name2 is first, other times name2a
-        #   name1 --> name2 --> name3
-        #   name1 --> name2 / name2a
-        #   name1 --> name2 --> name3 / name3a
-        #   name1 --> name2a / name2b
-        # Notice how the 2nd and 4th are basically the same, but one uses [name2 / name2a] VS [name2a / name2b]
-        skip = ["Eevee", "Tyrogue"]
+    @staticmethod
+    def _create_evo_line(evo_dict: dict) -> EvolutionLine:
+        # normal_path:
+        #   any path that follows a basic succession: a --> b --> c OR a --> b OR a
+        normal_path = ["name1", "name2", "name3"]
 
-        #TODO: FIX WURMPLE?
+        # one_split_two_path:
+        #   a --> b
+        #    \--> c
+        one_split_two_path = ["name1", "name2a", "name2b"]
 
-        base = None
-        evo_lines = []
+        # one_one_split_two_path:
+        #   a --> b --> c
+        #          \--> d
+        one_one_split_two_path = ["name1", "name2", "name3", "name3a"]
 
-        raw_evo_lines = []
+        # one_split_two_two_path:
+        #   a --> b --> d
+        #    \--> c --> e
+        one_split_two_two_path = ["name1", "name2", "name2a", "name3", "name3a"]
+
+        paths = []
         evo_keys = ["name{}", "name{}a", "name{}b"]
 
-        for raw_pokemon_evolution_line in self.raw_pokemon_evolution_lines:
-            temp = raw_pokemon_evolution_line.split("|", 1)[1]
-            dict = {}
+        # Detect which path type we are dealing with
+        list_of_keys = list(evo_dict.keys())
+
+        type = "normal"
+
+        # one_split_two_two_path?
+        if list_of_keys == one_split_two_two_path:
+            type = "one_split_two_two_path"
+        elif list_of_keys == one_one_split_two_path:
+            type = "one_one_split_two_path"
+        elif list_of_keys == one_split_two_path:
+            type = "one_split_two_path"
+
+        if type == "normal":
+            evo_steps = []
             for i in range(1, 5):
-                for key in evo_keys:
-                    formatted_key = key.format(str(i))
-                    pattern = r"\b" + re.escape(formatted_key) + r"\b"
-                    if re.search(pattern, temp):
-                        index = temp.index(formatted_key)
-                        index += len(formatted_key) + 1
-                        key_value = ""
-                        while temp[index] != "|":
-                            key_value += temp[index]
-                            index += 1
-                        dict[formatted_key] = key_value
-            raw_evo_lines.append(dict)
+                key = "name{}".format(i.__str__())
+                if key in evo_dict:
+                    evo_steps.append(EvolutionStep(evo_dict[key], evo_stage=i))
+            parent = evo_steps.pop(0)
+            current_parent = parent
+            while evo_steps:
+                temp = evo_steps.pop(0)
+                current_parent.add_next(temp)
+                current_parent = temp
+            return EvolutionLine(parent)
+        elif type == "one_split_two_path":
+            child_a = EvolutionStep(pokemon_name=evo_dict["name2a"],
+                                    evo_stage=2)
+            child_b = EvolutionStep(pokemon_name=evo_dict["name2b"],
+                                    evo_stage=2)
+            parent = EvolutionStep(pokemon_name=evo_dict["name1"],
+                                   evo_stage=1)
+            parent.add_next(child_a)
+            if not child_b.pokemon_name == child_a.pokemon_name:
+                parent.add_next(child_b)
+            return EvolutionLine(parent)
+        elif type == "one_one_split_two_path":
+            # TODO: Remove some duplicated code between one_one_split_two and one_two_two.
+            parent = EvolutionStep(pokemon_name=evo_dict["name1"],
+                                   evo_stage=1)
+            child = EvolutionStep(pokemon_name=evo_dict["name2"],
+                                  evo_stage=2)
+            child_child_a = EvolutionStep(pokemon_name=evo_dict["name3"],
+                                          evo_stage=3)
+            child_child_b = EvolutionStep(pokemon_name=evo_dict["name3a"],
+                                          evo_stage=3)
+            child.add_next(child_child_a)
+            child.add_next(child_child_b)
+            parent.add_next(child)
+            return EvolutionLine(parent)
+        elif type == "one_split_two_two_path":
+            parent = EvolutionStep(pokemon_name=evo_dict["name1"],
+                                   evo_stage=1)
+            child_a = EvolutionStep(pokemon_name=evo_dict["name2"],
+                                    evo_stage=2)
+            child_b = EvolutionStep(pokemon_name=evo_dict["name2a"],
+                                    evo_stage=2)
+            child_child_a = EvolutionStep(pokemon_name=evo_dict["name3"],
+                                          evo_stage=3)
+            child_child_b = EvolutionStep(pokemon_name=evo_dict["name3a"],
+                                          evo_stage=3)
 
-        if not self.parse_pokemon_name() in skip:
-            for evo_line in raw_evo_lines:
-                print(evo_line)
-                current = None
-                current_base = None
-                for index_step in range(1, 5):
-                    if base is None:
-                        base = EvolutionStep(
-                            pokemon_name=evo_line["name1"],
-                            evo_stage=1
-                        )
-                        current = base
-                        current_base = current
-                    elif index_step == 1:
-                        current = EvolutionStep(
-                            pokemon_name=evo_line["name1"],
-                            evo_stage=1
-                        )
-                        current_base = current
-                    else:
-                        latest = None
-                        for key in evo_keys:
-                            formatted_key = key.format(str(index_step))
-                            print(formatted_key)
-                            if formatted_key in evo_line:
-                                print("adding!")
+            child_a.add_next(child_child_a)
+            child_b.add_next(child_child_b)
+            parent.add_next(child_a)
+            parent.add_next(child_b)
+            return EvolutionLine(parent)
 
-                                # First check if it isn't the same Pokémon we are adding, since Bulbapedia adds
-                                #   new evo steps for different forms, even though the Pokémon name doesn't change
-                                duplicate = False
-                                for pkmn in current.next:
-                                    if evo_line[formatted_key] == pkmn.pokemon_name:
-                                        duplicate = True
+    def parse_pokemon_evo_line(self) -> EvolutionLine:
+        # Create an evolution line for this Pokémon
 
-                                if not duplicate:
-                                    new_step = EvolutionStep(
-                                        pokemon_name=evo_line[formatted_key],
-                                        evo_stage=index_step
-                                    )
-                                    current.add_next(new_step)
-                                    latest = new_step
-                        if latest:
-                            current = latest
-                evo_lines.append(current_base)
-        else:
+        # Some Pokémon cannot be done. Bulbapedia writers deemed these too complex, their evo logic is not
+        #   present in the data we have, rather this data is found somewhere else on their site.
+        skip = ["Eevee", "Tyrogue", "Feebas", "Milotic", "Nincada "]
+        if self.parse_pokemon_name() in skip:
             return None
 
-        # Create the evolution line object
-        #   Main evolution line is the first one
-        main_evo_line = EvolutionLine(evo_lines[0])
-        evo_lines.pop(0)
+        # First create a usable format, we only need the names from the infobox, put them in a dict:
+        raw_evo_lines = []
+        evo_keys = ["name{}", "name{}a", "name{}b"]
+        for raw_pokemon_evolution_line in self.raw_pokemon_evolution_lines:
+                temp = raw_pokemon_evolution_line.split("|", 1)[1]
+                dict = {}
+                for i in range(1, 5):
+                    for key in evo_keys:
+                        formatted_key = key.format(str(i))
+                        pattern = r"\b" + re.escape(formatted_key) + r"\b"
+                        if re.search(pattern, temp):
+                            index = temp.index(formatted_key)
+                            index += len(formatted_key) + 1
+                            key_value = ""
+                            while temp[index] != "|":
+                                key_value += temp[index]
+                                index += 1
+                            dict[formatted_key] = key_value
+                raw_evo_lines.append(dict)
 
-        # Now compare them, sometimes they are exactly the same since bulbapedia will add a new one for every form
-        for evo_line in evo_lines:
-            main_evo_line.combine_evo_lines(evo_line)
+        # Some Pokémon have multiple evo lines on their pages (need to fix forms here!), call the first on our
+        #   main line:
+        main_line = self._create_evo_line(raw_evo_lines[0])
+        # If we have more than one line, combine them together into one (again, need to fix forms, since different
+        #   forms do not need to be combined!)
+        if len(raw_evo_lines) > 1:
+            for line in raw_evo_lines[1:]:
+                secondary_line = self._create_evo_line(line)
+                main_line.combine_evo_lines(secondary_line.first)
 
-        return main_evo_line
+        return main_line
+
+    # def parse_pokemon_evo_line(self) -> EvolutionLine:
+    #     # The evolution line is a bit of work: the format changes sometimes (probably depending on the writers
+    #     # preference).
+    #     # Some Pokémon dont have code for their evo lines present because bulbapedia deemed it too
+    #     # complex, so they have special cases, these are: Eevee, Tyrogue, (these special case aren't implemented yet
+    #     # here)
+    #     # Examples:
+    #     #   [1] name1 --> name2 --> name3
+    #     #   [2] name1 --> name2 --> name3
+    #     #             --> name2a --> name3a
+    #     #   [3] name1 --> name2a
+    #     #             --> name2b
+    #     #   Case [2] seems to only be used by Wurmple
+    #     skip = ["Eevee", "Tyrogue", "Feebas", "Milotic", "Nincada "]
+    #
+    #     base = None
+    #     evo_lines = []
+    #
+    #     raw_evo_lines = []
+    #     evo_keys = ["name{}", "name{}a", "name{}b"]
+    #
+    #     for raw_pokemon_evolution_line in self.raw_pokemon_evolution_lines:
+    #         temp = raw_pokemon_evolution_line.split("|", 1)[1]
+    #         dict = {}
+    #         for i in range(1, 5):
+    #             for key in evo_keys:
+    #                 formatted_key = key.format(str(i))
+    #                 pattern = r"\b" + re.escape(formatted_key) + r"\b"
+    #                 if re.search(pattern, temp):
+    #                     index = temp.index(formatted_key)
+    #                     index += len(formatted_key) + 1
+    #                     key_value = ""
+    #                     while temp[index] != "|":
+    #                         key_value += temp[index]
+    #                         index += 1
+    #                     dict[formatted_key] = key_value
+    #         raw_evo_lines.append(dict)
+    #
+    #     if not self.parse_pokemon_name() in skip:
+    #         for evo_line in raw_evo_lines:
+    #             print(evo_line)
+    #             current = None
+    #             current_base = None
+    #             for index_step in range(1, 5):
+    #                 if base is None:
+    #                     base = EvolutionStep(
+    #                         pokemon_name=evo_line["name1"],
+    #                         evo_stage=1
+    #                     )
+    #                     current = base
+    #                     current_base = current
+    #                 elif index_step == 1:
+    #                     current = EvolutionStep(
+    #                         pokemon_name=evo_line["name1"],
+    #                         evo_stage=1
+    #                     )
+    #                     current_base = current
+    #                 else:
+    #                     latest = None
+    #                     for key in evo_keys:
+    #                         formatted_key = key.format(str(index_step))
+    #                         print(formatted_key)
+    #                         if formatted_key in evo_line:
+    #                             print("adding!")
+    #
+    #                             # First check if it isn't the same Pokémon we are adding, since Bulbapedia adds
+    #                             #   new evo steps for different forms, even though the Pokémon name doesn't change
+    #                             duplicate = False
+    #                             for pkmn in current.next:
+    #                                 if evo_line[formatted_key] == pkmn.pokemon_name:
+    #                                     duplicate = True
+    #
+    #                             if not duplicate:
+    #                                 new_step = EvolutionStep(
+    #                                     pokemon_name=evo_line[formatted_key],
+    #                                     evo_stage=index_step
+    #                                 )
+    #                                 current.add_next(new_step)
+    #                                 latest = new_step
+    #                     if latest:
+    #                         current = latest
+    #             evo_lines.append(current_base)
+    #     else:
+    #         return None
+    #
+    #     # Create the evolution line object
+    #     #   Main evolution line is the first one
+    #     main_evo_line = EvolutionLine(evo_lines[0])
+    #     evo_lines.pop(0)
+    #
+    #     # Now compare them, sometimes they are exactly the same since bulbapedia will add a new one for every form
+    #     for evo_line in evo_lines:
+    #         main_evo_line.combine_evo_lines(evo_line)
+    #
+    #     return main_evo_line
 
     def parse_pokemon_gender(self):
         # Grab the Pokémon decimal gender code, found inside the infobox dict, convert to male%
