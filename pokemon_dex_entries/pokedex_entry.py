@@ -37,7 +37,7 @@ class PokedexEntry:
         self.ndex_num = ndex_num
         self.ndex_next = ndex_next
         self.ndex_prev = ndex_prev
-        self.evo_line = EvolutionLine
+        self.evo_line = evo_line
         self.percent_male = percent_male
         self.met_height = met_height
         self.met_weight = met_weight
@@ -68,7 +68,7 @@ class PokedexEntry:
         result += "| gen         = {}\n".format(self.generation)
 
         # Add species
-        result += "| soort       = {}\n".format(self.species)
+        result += "| soort       = {} Pokémon\n".format(self.species)
 
         # Add type
         result += "| type        = {}\n".format(self.type)
@@ -111,19 +111,24 @@ class PokedexEntry:
                     result += "| ei2         = {}\n".format(self.egg_groups[i])
 
         # Evolutions
-        if self.evo_in:
-            result += "| evoin       = "
-            if type(self.evo_in) is list:
-                for i in range(len(self.evo_in)):
-                    result += "[[{}]]".format(self.evo_in[i])
 
-                    if i + 1 < len(self.evo_in):
+        current_step = EvolutionLine.find_evolution_step(self.evo_line.first, self.name)
+        evo_from = EvolutionLine.previous_step(self.evo_line.first, self.name)
+        evo_in = current_step.next
+
+        if evo_in:
+            result += "| evoin       = "
+            if type(evo_in) is list:
+                for i in range(len(evo_in)):
+                    result += "{}".format(evo_in[i].pokemon_name)
+
+                    if i + 1 < len(evo_in):
                         result += "<br />"
             else:
-                result += "[[{}]]".format(self.evo_in)
+                result += "{}".format(evo_in.pokemon_name)
             result += "\n"
-        if self.evo_from:
-            result += "| evovan      = {}\n".format(self.evo_from)
+        if evo_from:
+            result += "| evovan      = {}\n".format(evo_from.pokemon_name)
 
         result += "}}"
 

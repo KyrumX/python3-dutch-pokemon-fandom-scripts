@@ -23,12 +23,12 @@ class EvolutionLine:
         self.first = first
 
     @staticmethod
-    def _find_evolution_step(evolution_step: EvolutionStep,
+    def find_evolution_step(evolution_step: EvolutionStep,
                     pokemon_name: str) -> EvolutionStep:
         if evolution_step.pokemon_name == pokemon_name:
             return evolution_step
         for next_evultion in evolution_step.next:
-            result = EvolutionLine._find_evolution_step(next_evultion, pokemon_name)
+            result = EvolutionLine.find_evolution_step(next_evultion, pokemon_name)
             if result:
                 return result
 
@@ -43,6 +43,18 @@ class EvolutionLine:
             if result:
                 return result
         return False
+
+
+    @staticmethod
+    def previous_step(evolution_step: EvolutionStep,
+                      pokemon_name: str,
+                      previous_step = None):
+        if evolution_step.pokemon_name == pokemon_name:
+            return previous_step
+        for next_evultion in evolution_step.next:
+            result = EvolutionLine.previous_step(next_evultion, pokemon_name, evolution_step)
+            if result:
+                return result
 
     def combine_evo_lines(self, second_evo_first_step: EvolutionStep):
         """Combine a secondary evolution line with this one.
