@@ -7,8 +7,10 @@ class EvolutionStep(object):
 
     def __init__(self,
                  pokemon_name: str,
+                 ndex: str,
                  evo_stage: int):
         self.pokemon_name = pokemon_name
+        self.ndex = ndex
         self.next = []
         self.evo_stage = evo_stage
 
@@ -94,7 +96,6 @@ class EvolutionLine:
 
         while path:
             next = path.pop(0)
-            print(next)
             for evo in current.next:
                 if evo.pokemon_name == next:
                     current = evo

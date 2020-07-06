@@ -31,7 +31,12 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         text_area_text = self.structured_object.find("textarea", class_="mw-editfont-default").text
 
         # Grab the Pokémon info box and convert to a list (the string contains newlines, so every newline --> list item)
-        info_box = text_area_text.partition("{{Pokémon Infobox")[2].partition("}}")[0].replace("\n", "").split("|")
+
+
+        #info_box = text_area_text.partition("{{Pokémon Infobox")[2].partition("}}")[0].replace("\n", "").split("|")
+        info_box_raw = text_area_text.partition("{{Pokémon Infobox")[2].partition("\'\'\'")[0].replace("\n", "")[:-2]
+        info_box = re.split(r'\|+(?![^{{]*}})', info_box_raw)
+        print(info_box)
 
         # Grab the Pokémon PrevNext box and convert to a list
         prev_next_box = text_area_text.partition("{{PokémonPrevNext/Pokémon")[2].partition("}}")[0].split("|")
@@ -161,20 +166,20 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         type = "normal"
 
         # one_split_two_two_path?
-        if list_of_keys == one_split_two_two_path:
+        if set(one_split_two_two_path).issubset(list_of_keys):
             type = "one_split_two_two_path"
-        elif list_of_keys == one_one_split_two_path:
+        elif set(one_one_split_two_path).issubset(list_of_keys):
             type = "one_one_split_two_path"
-        elif list_of_keys == one_split_two_path:
+        elif set(one_split_two_path).issubset(list_of_keys):
             type = "one_split_two_path"
 
         if type == "normal":
-            print("Here!")
             evo_steps = []
             for i in range(1, 5):
-                key = "name{}".format(i.__str__())
-                if key in evo_dict:
-                    evo_steps.append(EvolutionStep(evo_dict[key], evo_stage=i))
+                name_key = "name{}".format(i.__str__())
+                ndex_key = "no{}".format(i.__str__())
+                if name_key in evo_dict:
+                    evo_steps.append(EvolutionStep(evo_dict[name_key], evo_dict[ndex_key], evo_stage=i))
             parent = evo_steps.pop(0)
             current_parent = parent
             while evo_steps:
@@ -184,10 +189,13 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
             return EvolutionLine(parent)
         elif type == "one_split_two_path":
             child_a = EvolutionStep(pokemon_name=evo_dict["name2a"],
+                                    ndex=evo_dict["no2a"],
                                     evo_stage=2)
             child_b = EvolutionStep(pokemon_name=evo_dict["name2b"],
+                                    ndex=evo_dict["no2b"],
                                     evo_stage=2)
             parent = EvolutionStep(pokemon_name=evo_dict["name1"],
+                                   ndex=evo_dict["no1"],
                                    evo_stage=1)
             parent.add_next(child_a)
             if not child_b.pokemon_name == child_a.pokemon_name:
@@ -196,12 +204,16 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         elif type == "one_one_split_two_path":
             # TODO: Remove some duplicated code between one_one_split_two and one_two_two.
             parent = EvolutionStep(pokemon_name=evo_dict["name1"],
+                                   ndex=re.findall(r'\d+', evo_dict["sprite1"])[0],  # Extract the ndex: 703Name
                                    evo_stage=1)
             child = EvolutionStep(pokemon_name=evo_dict["name2"],
+                                  ndex=re.findall(r'\d+', evo_dict["sprite2"])[0],  # Extract the ndex: 703Name
                                   evo_stage=2)
             child_child_a = EvolutionStep(pokemon_name=evo_dict["name3"],
+                                          ndex=re.findall(r'\d+', evo_dict["sprite3"])[0],  # Extract the ndex: 703Name
                                           evo_stage=3)
             child_child_b = EvolutionStep(pokemon_name=evo_dict["name3a"],
+                                          ndex=re.findall(r'\d+', evo_dict["sprite3a"])[0],  # Extract the ndex: 703Name
                                           evo_stage=3)
             child.add_next(child_child_a)
             child.add_next(child_child_b)
@@ -209,14 +221,19 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
             return EvolutionLine(parent)
         elif type == "one_split_two_two_path":
             parent = EvolutionStep(pokemon_name=evo_dict["name1"],
+                                   ndex=re.findall(r'\d+', evo_dict["sprite1"])[0],  # Extract the ndex: 703Name
                                    evo_stage=1)
             child_a = EvolutionStep(pokemon_name=evo_dict["name2"],
+                                    ndex=re.findall(r'\d+', evo_dict["sprite2"])[0],  # Extract the ndex: 703Name
                                     evo_stage=2)
             child_b = EvolutionStep(pokemon_name=evo_dict["name2a"],
+                                    ndex=re.findall(r'\d+', evo_dict["sprite2a"])[0],  # Extract the ndex: 703Name
                                     evo_stage=2)
             child_child_a = EvolutionStep(pokemon_name=evo_dict["name3"],
+                                          ndex=re.findall(r'\d+', evo_dict["sprite3"])[0],  # Extract the ndex: 703Name
                                           evo_stage=3)
             child_child_b = EvolutionStep(pokemon_name=evo_dict["name3a"],
+                                          ndex=re.findall(r'\d+', evo_dict["sprite3a"])[0],  # Extract the ndex: 703Name
                                           evo_stage=3)
 
             child_a.add_next(child_child_a)
@@ -236,23 +253,23 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
 
         # First create a usable format, we only need the names from the infobox, put them in a dict:
         raw_evo_lines = []
-        evo_keys = ["name{}", "name{}a", "name{}b"]
+        needed_keys = ["name{}", "name{}a", "name{}b", "sprite{}", "sprite{}a", "sprite{}b", "no{}", "no{}a", "no{}b"]
         for raw_pokemon_evolution_line in self.raw_pokemon_evolution_lines:
-                temp = raw_pokemon_evolution_line.split("|", 1)[1]
-                dict = {}
-                for i in range(1, 5):
-                    for key in evo_keys:
-                        formatted_key = key.format(str(i))
-                        pattern = r"\b" + re.escape(formatted_key) + r"\b"
-                        if re.search(pattern, temp):
-                            index = temp.index(formatted_key)
-                            index += len(formatted_key) + 1
-                            key_value = ""
-                            while temp[index] != "|":
-                                key_value += temp[index]
-                                index += 1
-                            dict[formatted_key] = key_value
-                raw_evo_lines.append(dict)
+            temp = raw_pokemon_evolution_line.split("|", 1)[1]
+            dict = {}
+            for i in range(1, 5):
+                for key in needed_keys:
+                    formatted_key = key.format(str(i))
+                    pattern = r"\b" + re.escape(formatted_key) + r"\b"
+                    if re.search(pattern, temp):
+                        index = temp.index(formatted_key)
+                        index += len(formatted_key) + 1
+                        key_value = ""
+                        while temp[index] != "|":
+                            key_value += temp[index]
+                            index += 1
+                        dict[formatted_key] = key_value
+            raw_evo_lines.append(dict)
 
         # Some Pokémon have multiple evo lines on their pages (need to fix forms here!), call the first on our
         #   main line:
