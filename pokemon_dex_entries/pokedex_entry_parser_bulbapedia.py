@@ -30,13 +30,9 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
 
         text_area_text = self.structured_object.find("textarea", class_="mw-editfont-default").text
 
-        # Grab the Pokémon info box and convert to a list (the string contains newlines, so every newline --> list item)
-
-
-        #info_box = text_area_text.partition("{{Pokémon Infobox")[2].partition("}}")[0].replace("\n", "").split("|")
+        # Grab the Pokémon info box and convert to a list
         info_box_raw = text_area_text.partition("{{Pokémon Infobox")[2].partition("\'\'\'")[0].replace("\n", "")[:-2]
         info_box = re.split(r'\|+(?![^{{]*}})', info_box_raw)
-        print(info_box)
 
         # Grab the Pokémon PrevNext box and convert to a list
         prev_next_box = text_area_text.partition("{{PokémonPrevNext/Pokémon")[2].partition("}}")[0].split("|")

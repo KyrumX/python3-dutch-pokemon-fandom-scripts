@@ -22,7 +22,9 @@ def main():
     try:
         pokedex_entry = scraper_class.build_pokedex_entry()
 
-        print(pokedex_entry.convert_to_dutch_wiki_template())
+        print(pokedex_entry._convert_name())
+
+        print(pokedex_entry.create_dutch_wiki_entry())
 
         print("Done! Dutch Fandom formatted text can be found in output.txt")
 

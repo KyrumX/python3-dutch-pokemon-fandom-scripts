@@ -78,12 +78,12 @@ class EvolutionLine:
         """
         for pkmn in secondary:
             if not EvolutionLine.is_part_of_evo_line(self.first, pkmn.pokemon_name):
-                self._insert(path.copy(), pkmn.pokemon_name, pkmn.evo_stage)
+                self._insert(path.copy(), pkmn.pokemon_name, pkmn.ndex, pkmn.evo_stage)
             new_path = path.copy()
             new_path.append(pkmn.pokemon_name)
             self._combine_evo_lines(new_path, pkmn.next)
 
-    def _insert(self, path: list, pkmn_name: str, evo_stage: int):
+    def _insert(self, path: list, pkmn_name: str, ndex: str, evo_stage: int):
         """Insert a new EvolutionStep into the EvolutionLine object
 
         Keyword arguments:
@@ -102,6 +102,7 @@ class EvolutionLine:
         current.add_next(
             EvolutionStep(
                 pkmn_name,
+                ndex,
                 evo_stage
             )
         )
