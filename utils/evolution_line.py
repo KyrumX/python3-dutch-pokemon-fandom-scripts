@@ -46,15 +46,14 @@ class EvolutionLine:
                 return result
         return False
 
-
     @staticmethod
     def previous_step(evolution_step: EvolutionStep,
                       pokemon_name: str,
                       previous_step = None):
         if evolution_step.pokemon_name == pokemon_name:
             return previous_step
-        for next_evultion in evolution_step.next:
-            result = EvolutionLine.previous_step(next_evultion, pokemon_name, evolution_step)
+        for next_evolution in evolution_step.next:
+            result = EvolutionLine.previous_step(next_evolution, pokemon_name, evolution_step)
             if result:
                 return result
 
@@ -106,3 +105,17 @@ class EvolutionLine:
                 evo_stage
             )
         )
+
+    def yield_all_name_ndex(self):
+        """Yields tupil of (name, ndex)"""
+        yield from self._yield_all_name_ndex(self.first)
+
+    def _yield_all_name_ndex(self, current_node):
+        """Recursive function to yield tupils of (name, ndex)"""
+
+        current_node = current_node
+
+        yield current_node.pokemon_name, current_node.ndex
+
+        for next_evolution in current_node.next:
+            yield from self._yield_all_name_ndex(next_evolution)

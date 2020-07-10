@@ -194,9 +194,19 @@ class PokedexEntry:
 
     def _build_evo_line(self):
         # Key: evo
-        # Value: provided: EvoLine - Required: [[Bestand:728.png]][[Bestand:729.png|link=Brionne]]
+        # Value: provided: tuple(name, ndex) - Required: [[Bestand:728.png]][[Bestand:729.png|link=Brionne]]
         #   [[Bestand:730.png|link=Primarina]]
-        pass
+
+        evo_line_dex_entry = "| evo         = "
+
+        link_frame = "[[Bestand:{ndex_number}.png]][[Bestand:{ndex_number}.png|link={pkmn_name}]]"
+
+        for name, ndex_number in self.evo_line.yield_all_name_ndex():
+            link = link_frame.format(ndex_number=ndex_number, pkmn_name=name)
+            evo_line_dex_entry += link
+
+        evo_line_dex_entry += "\n"
+        return evo_line_dex_entry
 
 
     def create_dutch_wiki_entry(self):
