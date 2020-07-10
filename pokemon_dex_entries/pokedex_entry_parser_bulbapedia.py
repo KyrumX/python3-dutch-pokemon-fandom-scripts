@@ -6,6 +6,7 @@ from pokemon_dex_entries.pokedex_entry_parser import PokedexEntryParser
 from utils.color_translation import ENGLISH_TO_DUTCH_COLOR
 from utils.egg_groups_translation import ENGLISH_TO_DUTCH_EGG_GROUP
 from utils.evolution_line import EvolutionLine, EvolutionStep
+from utils.gen_translation import ENGLISH_TO_DUTCH_GEN
 from utils.gender_conversion import GENDER_DECIMAL_TO_MALE_PERCENTAGE
 from utils.list_to_dict import str_list_to_dict
 from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
@@ -76,7 +77,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
     def parse_pokemon_generation(self):
         # Grab the Pokémon generation, found inside the infobox dict
         # key: "generation"
-        return "Generatie " + self.infobox_dict["generation"]
+        return ENGLISH_TO_DUTCH_GEN[self.infobox_dict["generation"]]
 
     def parse_pokemon_types(self):
         # Grab the Pokémon type(s), found inside the infobox dict

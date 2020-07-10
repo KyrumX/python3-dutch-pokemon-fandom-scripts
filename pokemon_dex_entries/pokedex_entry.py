@@ -194,12 +194,12 @@ class PokedexEntry:
 
     def _build_evo_line(self):
         # Key: evo
-        # Value: provided: tuple(name, ndex) - Required: [[Bestand:728.png]][[Bestand:729.png|link=Brionne]]
-        #   [[Bestand:730.png|link=Primarina]]
+        # Value: provided: tuple(name, ndex) -
+        #   Required: [[Bestand:729.png|link=Brionne]][[Bestand:730.png|link=Primarina]]
 
         evo_line_dex_entry = "| evo         = "
 
-        link_frame = "[[Bestand:{ndex_number}.png]][[Bestand:{ndex_number}.png|link={pkmn_name}]]"
+        link_frame = "[[Bestand:{ndex_number}.png|link={pkmn_name}]]"
 
         for name, ndex_number in self.evo_line.yield_all_name_ndex():
             link = link_frame.format(ndex_number=ndex_number, pkmn_name=name)
@@ -274,6 +274,7 @@ class PokedexEntry:
         # Evolutions
         wiki_entry += self._build_evo_in()
         wiki_entry += self._build_evo_from()
+        wiki_entry += self._build_evo_line()
 
         # And add the suffix
         wiki_entry += self.suffix
