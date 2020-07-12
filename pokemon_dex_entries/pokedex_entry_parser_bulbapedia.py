@@ -246,7 +246,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         #   present in the data we have, rather this data is found somewhere else on their site.
         skip = ["Eevee", "Tyrogue", "Feebas", "Milotic", "Nincada"]
         if self.parse_pokemon_name() in skip:
-            return None
+            return EvolutionLine(first=EvolutionStep(pokemon_name=self.parse_pokemon_name(), ndex="???", evo_stage=1))
 
         # First create a usable format, we only need the names from the infobox, put them in a dict:
         raw_evo_lines = []

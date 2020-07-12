@@ -68,3 +68,31 @@ Sample output for `python3 nl_pkmn_fandom_list_generator.py -url https://www.ser
 |-
 |}
 ```
+
+
+`python3 nl_pkmn_fandom_entry_generator -url {the url}
+
+Sample output for `python3 nl_pkmn_fandom_entry_generator.py -url "https://bulbapedia.bulbagarden.net/w/index.php?title=Rockruff_(Pok%C3%
+A9mon)&action=edit"`:
+```
+{{PokémonInfobox
+| naam        = Rockruff
+| jnaam       = イワンコ Iwanko
+| ndex        = 744
+| ndexvorig   = Ribombee
+| ndexvolgend = Lycanroc
+| gen         = Generatie VII
+| soort       = Puppy Pokémon
+| type        = Steen
+| metgewicht  = 9.2 kg
+| metlengte   = 0.5 m
+| imgewicht   = 20.3 lbs.
+| imlengte    = 1'08"
+| gave        = [[Keen Eye]]<br />[[Vital Spirit]]<br />[[Own Tempo]]
+| dw          = Steadfast
+| mannelijk   = 50
+| ei1         = Veld
+| evoin       = Lycanroc
+| evo         = [[Bestand:744.png|link=Rockruff]][[Bestand:745.png|link=Lycanroc]]
+}}
+```
