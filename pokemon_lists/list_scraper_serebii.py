@@ -1,3 +1,6 @@
+#  Copyright (c) 2020 Aaron Beetstra
+#  All rights reserved.
+
 import re
 
 from pokemon_lists.nl_pkmn_fandom_list import DutchPokemonFandomPokemonList

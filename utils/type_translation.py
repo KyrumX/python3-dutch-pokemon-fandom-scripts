@@ -1,4 +1,4 @@
-ENGLISH_TO_DUTCH = {
+ENGLISH_TO_DUTCH_TYPE = {
     "normal": "Normaal",
     "fire": "Vuur",
     "water": "Water",
