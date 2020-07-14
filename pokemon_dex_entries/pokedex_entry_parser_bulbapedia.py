@@ -26,6 +26,20 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
     Other information we need: prev, next from the national dex, evolution
     """
 
+    # List of forms we can safely ignore:
+    bulbapedia_ignored_forms = [
+        "cosplay",
+        "in a cap",
+        "partner",
+        "gigantamax",
+        "spikey eared",
+        "neutral mode",
+        "busted form",
+        "original color",
+        "gulping form",
+        "gorging form"
+    ]
+
     def __init__(self, url: str):
         super().__init__(url)
 
@@ -63,6 +77,23 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         # Bulbapedia uses "=" to split between the key and value
         self.infobox_dict = str_list_to_dict(info_box, "=")
         self.prev_next_dict = str_list_to_dict(prev_next_box, "=")
+
+        # Decide if we have multiple forms to deal with, key: 'forme'
+        n_forms = None if 'forme' not in self.infobox_dict else int(self.infobox_dict['forme'])
+        forms = []
+
+        if n_forms:
+            # Remove forms we don't care about:
+            for i in range(1, n_forms + 1):
+                key = "form{}".format(i.__str__())
+                form_name = self.infobox_dict[key] if key in self.infobox_dict else None
+                if form_name and not form_name.lower() in self.bulbapedia_ignored_forms:
+                    forms += form_name
+
+    def parse_pokemon_form_name(self):
+        # Grab the Pokémon form1 name, found inside the infobox dict
+        # key: "form1" (or name if form1 doesn't exist)
+        return self.infobox_dict['form1'] if 'form1' in self.infobox_dict else self.parse_pokemon_name()
 
     def parse_pokemon_name(self):
         # Grab the Pokémon name, found inside the infobox dict
