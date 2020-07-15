@@ -80,7 +80,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
 
         # Decide if we have multiple forms to deal with, key: 'forme'
         n_forms = None if 'forme' not in self.infobox_dict else int(self.infobox_dict['forme'])
-        forms = []
+        pokemon_forms = {}
 
         if n_forms:
             # Remove forms we don't care about:
@@ -88,14 +88,25 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
                 key = "form{}".format(i.__str__())
                 form_name = self.infobox_dict[key] if key in self.infobox_dict else None
                 if form_name and not form_name.lower() in self.bulbapedia_ignored_forms:
-                    forms += form_name
+                    pokemon_forms[i] = form_name
+
+        n_forms = len(pokemon_forms)
+        if 1 in pokemon_forms:
+            # Form1 might be seen as a different form (due to name), but to us it's just the base form.
+            #   So we need to verify whether there are actually more forms if we remove form1.
+            n_forms -= 1
+        if n_forms > 1:
+            # There are multiple forms!
+            pass
+
+        print(n_forms)
 
     def parse_pokemon_form_name(self):
         # Grab the Pokémon form1 name, found inside the infobox dict
         # key: "form1" (or name if form1 doesn't exist)
         return self.infobox_dict['form1'] if 'form1' in self.infobox_dict else self.parse_pokemon_name()
 
-    def parse_pokemon_name(self):
+    def parse_pokemon_name(self, id = None):
         # Grab the Pokémon name, found inside the infobox dict
         # key: "name"
         return self.infobox_dict["name"]
@@ -128,6 +139,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         return self.translator.translate(self.infobox_dict["category"], src="en", dest="nl").text.capitalize()
 
     def parse_pokemon_abilities(self):
+        # TODO: FIX WITH FORMS
         # Grab the Pokémon abilities, found inside the infobox dict
         # All keys that contain "ability" except "abilityd", "abilitycold", "abilityn" and "abilitylayout"
 

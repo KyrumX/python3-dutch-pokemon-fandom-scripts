@@ -4,14 +4,11 @@ from utils.evolution_line import EvolutionLine
 
 
 class PokedexEntry:
-
-    # TODO: FIX EVOLUTION LINE PARSING
-
     prefix = "{{PokémonInfobox\n"
     suffix = "}}"
 
     def __init__(self,
-                 name:  str,
+                 name: str,
                  japanse_name: str,
                  generation: str,
                  species: str,
@@ -207,7 +204,6 @@ class PokedexEntry:
 
         evo_line_dex_entry += "\n"
         return evo_line_dex_entry
-
 
     def create_dutch_wiki_entry(self):
 
