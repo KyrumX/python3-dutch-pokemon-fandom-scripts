@@ -1,4 +1,4 @@
-from pokemon_dex_entries.pokedex_entry_parser_pokemondb import PokedexEntryParserPokemonDB
+from pokemon_dex_entries.pokemondb.pokedex_entry_parser_pokemondb import PokedexEntryParserPokemonDB
 
 
 class PokedexEntryFactory():

@@ -44,6 +44,10 @@ class PokedexEntry:
         self.imp_height = imp_height
         self.imp_weight = imp_weight
         self.egg_groups = egg_groups
+        self.forms = []
+
+    def add_forms(self, forms: list):
+        self.forms = self.forms + forms
 
     def _build_name(self):
         # Key: naam

@@ -37,6 +37,14 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
     def __init__(self, url: str):
         super().__init__(url)
 
+    def generate_usable_data(self):
+        """"
+        Generate data based on the scaped HTML
+
+
+        :returns infobox, the ndex prev/next box, and raw evolution lines
+        :type dict, dict, list
+        """
         text_area_text = self.structured_object.find("textarea", class_="mw-editfont-default").text
 
         # Grab the Pokémon info box and convert to a list
@@ -66,21 +74,21 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
         # Pattern to grab all evo boxes if there are multiple
         regex_pattern_individual_evo_boxes = r"{{Evobox(.*)}}\n"
 
-        self.raw_pokemon_evolution_lines = re.findall(regex_pattern_individual_evo_boxes, evolution_box, re.IGNORECASE)
+        raw_pokemon_evolution_lines = re.findall(regex_pattern_individual_evo_boxes, evolution_box, re.IGNORECASE)
 
         # Bulbapedia uses "=" to split between the key and value
-        self.infobox_dict = str_list_to_dict(info_box, "=")
-        self.prev_next_dict = str_list_to_dict(prev_next_box, "=")
+        infobox_dict = str_list_to_dict(info_box, "=")
+        prev_next_dict = str_list_to_dict(prev_next_box, "=")
 
         # Decide if we have multiple forms to deal with, key: 'forme'
-        n_forms = None if 'forme' not in self.infobox_dict else int(self.infobox_dict['forme'])
+        n_forms = None if 'forme' not in infobox_dict else int(infobox_dict['forme'])
         pokemon_forms = {}
 
         if n_forms:
             # Remove forms we don't care about:
             for i in range(1, n_forms + 1):
                 key = "form{}".format(i.__str__())
-                form_name = self.infobox_dict[key] if key in self.infobox_dict else None
+                form_name = infobox_dict[key] if key in infobox_dict else None
                 if form_name and not form_name.lower() in self.bulbapedia_ignored_forms:
                     pokemon_forms[i] = form_name
 
@@ -89,8 +97,5 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
             # Form1 might be seen as a different form (due to name), but to us it's just the base form.
             #   So we need to verify whether there are actually more forms if we remove form1.
             n_forms -= 1
-        if n_forms > 1:
-            # There are multiple forms!
-            pass
 
-        print(n_forms)
+        return infobox_dict, prev_next_dict, raw_pokemon_evolution_lines, pokemon_forms

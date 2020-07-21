@@ -10,6 +10,16 @@ class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategy
         self.infobox_dict = infobox_dict
         self.form_id = form_id
 
+    def parse_pokemon_form_name(self):
+        """"
+        Grab the form name
+        key: "form{form_id}"
+        :return form_name
+        """
+        key = "form{form_id}".format(form_id=self.form_id.__str__())
+
+        return self.infobox_dict[key]
+
     def parse_pokemon_types(self):
         # Grab the Pokémon type(s), found inside the infobox dict
         # keys: "form{form_id}type1" and optionally "form{form_id}type2"
