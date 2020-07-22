@@ -96,6 +96,6 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
         if 1 in pokemon_forms:
             # Form1 might be seen as a different form (due to name), but to us it's just the base form.
             #   So we need to verify whether there are actually more forms if we remove form1.
-            n_forms -= 1
+            del pokemon_forms[1]
 
         return infobox_dict, prev_next_dict, raw_pokemon_evolution_lines, pokemon_forms

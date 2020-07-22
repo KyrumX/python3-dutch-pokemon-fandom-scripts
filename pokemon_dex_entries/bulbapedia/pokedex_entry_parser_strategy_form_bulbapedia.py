@@ -21,6 +21,7 @@ class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategy
         return self.infobox_dict[key]
 
     def parse_pokemon_types(self):
+        # TODO: Zorg dat je hier gwn de super kunt gebruiken als de key niet bestaat, is nu een mess
         # Grab the Pokémon type(s), found inside the infobox dict
         # keys: "form{form_id}type1" and optionally "form{form_id}type2"
         # Returns None if the form has no type difference with it's primary form
@@ -36,7 +37,12 @@ class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategy
             else:
                 return [form_primary_type, None]
         else:
-            return None
+            primary_type = ENGLISH_TO_DUTCH_TYPE[self.infobox_dict["type1"].lower()]
+            if "type2" in self.infobox_dict:
+                secondary_type = ENGLISH_TO_DUTCH_TYPE[self.infobox_dict["type2"].lower()]
+                return [primary_type, secondary_type]
+            else:
+                return [primary_type, None]
 
     def parse_pokemon_abilities(self):
         # Grab the Pokémon abilities, found inside the infobox dict
@@ -67,8 +73,9 @@ class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategy
         # Returns height(str) if found, else returns None
 
         key = "height-m{form_id}".format(form_id=self.form_id.__str__())
+        base_key = "height-m"
 
-        return self._if_key_found_return_else_none(key)
+        return self._if_key_found_return_else_base_or_none(key, base_key)
 
     def parse_pokemon_met_weight(self):
         # Grab the Pokémon height in meters
@@ -76,8 +83,9 @@ class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategy
         # Returns weight(str) if found, else returns None
 
         key = "weight-kg{form_id}".format(form_id=self.form_id.__str__())
+        base_key = "weight-kg"
 
-        return self._if_key_found_return_else_none(key)
+        return self._if_key_found_return_else_base_or_none(key, base_key)
 
     def parse_pokemon_imp_height(self):
         # Grab the Pokémon height in meters
@@ -85,8 +93,9 @@ class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategy
         # Returns height(str) if found, else returns None
 
         key = "height-ftin{form_id}".format(form_id=self.form_id.__str__())
+        base_key = "weight-kg"
 
-        return self._if_key_found_return_else_none(key)
+        return self._if_key_found_return_else_base_or_none(key, base_key)
 
     def parse_pokemon_imp_weight(self):
         # Grab the Pokémon height in meters
@@ -94,10 +103,13 @@ class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategy
         # Returns weight(str) if found, else returns None
 
         key = "weight-lbs{form_id}".format(form_id=self.form_id.__str__())
+        base_key = "weight-lbs"
 
-        return self._if_key_found_return_else_none(key)
+        return self._if_key_found_return_else_base_or_none(key, base_key)
 
-    def _if_key_found_return_else_none(self, key):
+    def _if_key_found_return_else_base_or_none(self, key, base_key):
         if key in self.infobox_dict:
             return self.infobox_dict[key]
+        elif base_key in self.infobox_dict:
+            return self.infobox_dict[base_key]
         return None

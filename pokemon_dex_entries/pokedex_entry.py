@@ -7,8 +7,13 @@ class PokedexEntry:
     prefix = "{{PokémonInfobox\n"
     suffix = "}}"
 
+    prefix_multi_forms = """<div align="right"><tabber>\n"""
+    delimiter_multi_forms = "|-|\n"
+    suffix_multi_forms = "</tabber></div>"
+
     def __init__(self,
                  name: str,
+                 form_name: str,
                  japanse_name: str,
                  generation: str,
                  species: str,
@@ -27,6 +32,7 @@ class PokedexEntry:
                  imp_weight: float,
                  egg_groups: list):
         self.name = name
+        self.form_name = form_name
         self.japanese_name = japanse_name
         self.generation = generation
         self.species = species
@@ -54,6 +60,12 @@ class PokedexEntry:
         # Value: provided: str - Required: str
         name_entry = "| naam        = {}\n".format(self.name)
         return name_entry
+
+    def build_form_name(self):
+        # Format: {form_name}=\n
+        # Value: provided: str - Required: str
+        form_name_entry = "{}=\n".format(self.form_name)
+        return form_name_entry
 
     def _build_japanese_name(self):
         # Key: jnaam
@@ -211,6 +223,12 @@ class PokedexEntry:
 
     def create_dutch_wiki_entry(self):
 
+        if self.forms:
+            return self._create_dutch_wiki_entry_forms()
+        return self._create_dutch_wiki_entry()
+
+    def _create_dutch_wiki_entry(self):
+
         wiki_entry = ""
 
         # Add the prefix
@@ -278,5 +296,57 @@ class PokedexEntry:
 
         # And add the suffix
         wiki_entry += self.suffix
+
+        return wiki_entry
+
+    def _create_dutch_wiki_entry_forms(self):
+
+        wiki_entry = ""
+
+        # Add the tabber
+        wiki_entry += self.prefix_multi_forms
+
+        # Add the form name
+        wiki_entry += self.build_form_name()
+
+        # Add the base form
+        wiki_entry += self._create_dutch_wiki_entry()
+
+        # Add forms
+        for form in self.forms:
+
+            # Add delimiter
+            # TODO: Fix NDEX number
+            wiki_entry += self.delimiter_multi_forms
+            form_entry = PokedexEntry(
+                self.name,
+                form["form"],
+                self.japanese_name,
+                self.generation,
+                self.species,
+                form["type"][0],
+                form["type"][1],
+                form["ability"],
+                self.hidden_ability,
+                self.ndex_num,
+                self.ndex_next,
+                self.ndex_prev,
+                self.evo_line,
+                self.percent_male,
+                form["met_height"],
+                form["met_weight"],
+                form["imp_height"],
+                form["imp_weight"],
+                self.egg_groups
+            )
+
+            # Add next form name
+            wiki_entry += form_entry.build_form_name()
+
+            # Build the form data
+            wiki_entry += form_entry.create_dutch_wiki_entry()
+
+        # Add suffix
+        wiki_entry += self.suffix_multi_forms
 
         return wiki_entry

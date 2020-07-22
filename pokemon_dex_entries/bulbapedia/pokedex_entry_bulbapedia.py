@@ -30,7 +30,9 @@ class PokedexEntryBulbapedia:
                 parsed_forms.append(parser_form.build_pokedex_form_entry())
 
             # Add the forms to the Pokedex Entry:
-            dex_entry.add_forms(forms)
+            dex_entry.add_forms(parsed_forms)
 
         # Generate the output for Fandom
         output = dex_entry.create_dutch_wiki_entry()
+
+        print(output)

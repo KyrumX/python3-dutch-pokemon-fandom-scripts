@@ -14,7 +14,7 @@ class PokedexEntryParserStrategyForm(abc.ABC):
     def build_pokedex_form_entry(self):
         return {
             "form": self.parse_pokemon_form_name(),
-            "type:": self.parse_pokemon_types(),
+            "type": self.parse_pokemon_types(),
             "ability": self.parse_pokemon_abilities(),
             "met_height": self.parse_pokemon_met_height(),
             "met_weight": self.parse_pokemon_met_weight(),

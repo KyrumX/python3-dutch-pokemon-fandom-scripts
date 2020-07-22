@@ -25,6 +25,7 @@ class PokedexEntryParserStrategy(PokedexEntryParserStrategyForm, abc.ABC):
     def build_pokedex_entry(self):
         return PokedexEntry(
             self.parse_pokemon_name(),
+            self.parse_pokemon_form_name(),
             self.parse_pokemon_japanese_name(),
             self.parse_pokemon_generation(),
             self.parse_pokemon_species(),

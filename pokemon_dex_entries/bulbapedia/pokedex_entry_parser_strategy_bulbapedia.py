@@ -277,7 +277,7 @@ class PokedexEntryParserPokemonStrategyBulbapedia(PokedexEntryParserStrategy):
         egg_groups_n = int(self.infobox_dict["egggroupn"])
 
         if egg_groups_n == 0:
-            return ENGLISH_TO_DUTCH_EGG_GROUP["Undiscovered"]
+            return ENGLISH_TO_DUTCH_EGG_GROUP["undiscovered"]
         elif egg_groups_n == 1:
             return [ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup1"].lower()]]
         else:
