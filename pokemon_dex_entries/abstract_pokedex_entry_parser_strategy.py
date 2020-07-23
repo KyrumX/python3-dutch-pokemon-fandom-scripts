@@ -5,7 +5,7 @@ import abc
 from abc import abstractmethod
 
 
-class PokedexEntryParserStrategyForm(abc.ABC):
+class AbstractPokedexEntryParserStrategy(abc.ABC):
     """
     A class used to build parsers for FORM depending characteristics
     """

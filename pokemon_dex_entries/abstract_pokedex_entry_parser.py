@@ -7,11 +7,11 @@ from abc import abstractmethod
 from googletrans import Translator
 
 from pokemon_dex_entries.pokedex_entry import PokedexEntry
-from pokemon_dex_entries.pokedex_entry_parser_strategy_form import PokedexEntryParserStrategyForm
+from pokemon_dex_entries.abstract_pokedex_entry_parser_strategy import AbstractPokedexEntryParserStrategy
 from utils.evolution_line import EvolutionLine
 
 
-class PokedexEntryParserStrategy(PokedexEntryParserStrategyForm, abc.ABC):
+class AbstractPokedexEntryParser(abc.ABC):
     """
     A class used to build parsers for all characteristics (form depending, and general characteristics)
 
@@ -19,8 +19,19 @@ class PokedexEntryParserStrategy(PokedexEntryParserStrategyForm, abc.ABC):
         form depending characteristics are required as well as general characteristics.
     """
 
-    def __init__(self):
+    def __init__(self, strategy: AbstractPokedexEntryParserStrategy):
         self.translator = Translator()
+
+        self._form_strategy = strategy
+        self.default_strategy = strategy
+
+    @property
+    def form_strategy(self) -> AbstractPokedexEntryParserStrategy:
+        return self._form_strategy
+
+    @form_strategy.setter
+    def form_strategy(self, strategy: AbstractPokedexEntryParserStrategy):
+        self._form_strategy = strategy
 
     def build_pokedex_entry(self):
         return PokedexEntry(
@@ -49,6 +60,9 @@ class PokedexEntryParserStrategy(PokedexEntryParserStrategyForm, abc.ABC):
     def parse_pokemon_name(self):
         pass
 
+    def parse_pokemon_form_name(self):
+        return self._form_strategy.parse_pokemon_form_name()
+
     @abstractmethod
     def parse_pokemon_japanese_name(self):
         pass
@@ -60,6 +74,12 @@ class PokedexEntryParserStrategy(PokedexEntryParserStrategyForm, abc.ABC):
     @abstractmethod
     def parse_pokemon_species(self):
         pass
+
+    def parse_pokemon_types(self):
+        return self._form_strategy.parse_pokemon_types()
+
+    def parse_pokemon_abilities(self):
+        return self._form_strategy.parse_pokemon_abilities()
 
     @abstractmethod
     def parse_pokemon_hidden_ability(self):
@@ -84,6 +104,18 @@ class PokedexEntryParserStrategy(PokedexEntryParserStrategyForm, abc.ABC):
     @abstractmethod
     def parse_pokemon_gender(self):
         pass
+
+    def parse_pokemon_met_height(self):
+        return self._form_strategy.parse_pokemon_met_height()
+
+    def parse_pokemon_met_weight(self):
+        return self._form_strategy.parse_pokemon_met_weight()
+
+    def parse_pokemon_imp_height(self):
+        return self._form_strategy.parse_pokemon_imp_height()
+
+    def parse_pokemon_imp_weight(self):
+        return self._form_strategy.parse_pokemon_imp_weight()
 
     @abstractmethod
     def parse_pokemon_dex_color(self):

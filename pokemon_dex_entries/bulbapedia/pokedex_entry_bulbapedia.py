@@ -1,9 +1,9 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
-from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_strategy_bulbapedia import \
+from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_bulbapedia import \
     PokedexEntryParserPokemonStrategyBulbapedia
-from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_strategy_form_bulbapedia import \
-    PokedexEntryParserPokemonStrategyFormBulbapedia
+from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_strategy_bulbapedia_form import \
+    PokedexEntryParserPokemonStrategyBulbapediaForm
 from pokemon_dex_entries.bulbapedia.pokedex_entry_scraper_bulbapedia import PokedexEntryScraperPokemonBulbapedia
 
 
@@ -26,8 +26,11 @@ class PokedexEntryBulbapedia:
         if forms:
             parsed_forms = []
             for form_id in forms:
-                parser_form = PokedexEntryParserPokemonStrategyFormBulbapedia(infobox_dict, form_id)
-                parsed_forms.append(parser_form.build_pokedex_form_entry())
+                parser_base.form_strategy = PokedexEntryParserPokemonStrategyBulbapediaForm(
+                    form_id=form_id,
+                    infobox_dict=parser_base.infobox_dict
+                )
+                parsed_forms.append(parser_base.form_strategy.build_pokedex_form_entry())
 
             # Add the forms to the Pokedex Entry:
             dex_entry.add_forms(parsed_forms)

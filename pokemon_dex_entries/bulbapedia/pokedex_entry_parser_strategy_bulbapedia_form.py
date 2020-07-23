@@ -1,10 +1,10 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
-from pokemon_dex_entries.pokedex_entry_parser_strategy_form import PokedexEntryParserStrategyForm
+from pokemon_dex_entries.abstract_pokedex_entry_parser_strategy_form import AbstractPokedexEntryParserStrategyForm
 from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
 
 
-class PokedexEntryParserPokemonStrategyFormBulbapedia(PokedexEntryParserStrategyForm):
+class PokedexEntryParserPokemonStrategyBulbapediaForm(AbstractPokedexEntryParserStrategyForm):
 
     def __init__(self, infobox_dict: dict, form_id: int):
         self.infobox_dict = infobox_dict
