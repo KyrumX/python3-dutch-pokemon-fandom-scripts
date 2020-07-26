@@ -102,7 +102,7 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
                 name_key = "name{}".format(i.__str__())
                 ndex_key = "no{}".format(i.__str__())
                 if name_key in evo_dict:
-                    evo_steps.append(EvolutionStep(evo_dict[name_key], evo_dict[ndex_key], evo_stage=i))
+                    evo_steps.append(EvolutionStep(evo_dict[name_key], re.findall(r'\d+', evo_dict[ndex_key])[0], evo_stage=i))
             parent = evo_steps.pop(0)
             current_parent = parent
             while evo_steps:
@@ -112,13 +112,13 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
             return EvolutionLine(parent)
         elif type == "one_split_two_path":
             child_a = EvolutionStep(pokemon_name=evo_dict["name2a"],
-                                    ndex=evo_dict["no2a"],
+                                    ndex=re.findall(r'\d+', evo_dict["no2a"])[0],
                                     evo_stage=2)
             child_b = EvolutionStep(pokemon_name=evo_dict["name2b"],
-                                    ndex=evo_dict["no2b"],
+                                    ndex=re.findall(r'\d+', evo_dict["no2b"])[0],
                                     evo_stage=2)
             parent = EvolutionStep(pokemon_name=evo_dict["name1"],
-                                   ndex=evo_dict["no1"],
+                                   ndex=re.findall(r'\d+', evo_dict["no1"])[0],
                                    evo_stage=1)
             parent.add_next(child_a)
             if not child_b.pokemon_name == child_a.pokemon_name:

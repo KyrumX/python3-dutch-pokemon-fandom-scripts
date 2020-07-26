@@ -69,7 +69,8 @@ class PokedexEntryParserPokemonStrategyBulbapediaBase(AbstractPokedexEntryParser
 
         metric_height_key = kwargs.get("metric_height_key", "height-m")
 
-        return self.infobox_dict[metric_height_key]
+        if metric_height_key in self.infobox_dict:
+            return self.infobox_dict[metric_height_key]
 
     def parse_pokemon_met_weight(self, **kwargs) -> str:
         # Grab the Pokémon height in kilograms
@@ -77,7 +78,8 @@ class PokedexEntryParserPokemonStrategyBulbapediaBase(AbstractPokedexEntryParser
 
         metric_weight_key = kwargs.get("metric_weight_key", "weight-kg")
 
-        return self.infobox_dict[metric_weight_key]
+        if metric_weight_key in self.infobox_dict:
+            return self.infobox_dict[metric_weight_key]
 
     def parse_pokemon_imp_height(self, **kwargs) -> str:
         # Grab the Pokémon height in float inch
@@ -85,11 +87,13 @@ class PokedexEntryParserPokemonStrategyBulbapediaBase(AbstractPokedexEntryParser
 
         imperial_height_key = kwargs.get("imperial_height_key", "height-ftin")
 
-        return self.infobox_dict[imperial_height_key]
+        if imperial_height_key in self.infobox_dict:
+            return self.infobox_dict[imperial_height_key]
 
     def parse_pokemon_imp_weight(self, **kwargs) -> str:
         # Grab the Pokémon height in float inch
         # default key: "weight-lbs"
         imperial_weight_key = kwargs.get("imperial_weight_key", "weight-lbs")
 
-        return self.infobox_dict[imperial_weight_key]
+        if imperial_weight_key in self.infobox_dict:
+            return self.infobox_dict[imperial_weight_key]
