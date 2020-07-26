@@ -16,7 +16,7 @@ from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
 class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
 
     def __init__(self, infobox: dict, prev_next_dict: dict, raw_pokemon_evolution_lines: list):
-        super().__init__(strategy=PokedexEntryParserPokemonStrategyBulbapediaBase({}))
+        super().__init__(strategy=PokedexEntryParserPokemonStrategyBulbapediaBase(infobox))
         self.infobox_dict = infobox
         self.prev_next_dict = prev_next_dict
         self.raw_pokemon_evolution_lines = raw_pokemon_evolution_lines
@@ -41,13 +41,6 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
         # key: "category"
 
         return self.translator.translate(self.infobox_dict["category"], src="en", dest="nl").text.capitalize()
-
-    def parse_pokemon_hidden_ability(self):
-        # Grab the Pokémon hidden ability (if it has one), found inside the infobox dict
-        # key: "abilityd"
-
-        if "abilityd" in self.infobox_dict:
-            return self.infobox_dict["abilityd"]
 
     def parse_pokemon_national_dex_number(self):
         # Grab the Pokémon national dex number, found inside the infobox dict
@@ -229,7 +222,7 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
         egg_groups_n = int(self.infobox_dict["egggroupn"])
 
         if egg_groups_n == 0:
-            return ENGLISH_TO_DUTCH_EGG_GROUP["undiscovered"]
+            return [ENGLISH_TO_DUTCH_EGG_GROUP["undiscovered"]]
         elif egg_groups_n == 1:
             return [ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup1"].lower()]]
         else:

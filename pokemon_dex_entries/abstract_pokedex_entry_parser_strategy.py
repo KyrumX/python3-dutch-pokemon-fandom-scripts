@@ -16,6 +16,7 @@ class AbstractPokedexEntryParserStrategy(abc.ABC):
             "form": self.parse_pokemon_form_name(),
             "type": self.parse_pokemon_types(),
             "ability": self.parse_pokemon_abilities(),
+            "h_ability": self.parse_pokemon_hidden_ability(),
             "met_height": self.parse_pokemon_met_height(),
             "met_weight": self.parse_pokemon_met_weight(),
             "imp_height": self.parse_pokemon_imp_height(),
@@ -32,6 +33,10 @@ class AbstractPokedexEntryParserStrategy(abc.ABC):
 
     @abstractmethod
     def parse_pokemon_abilities(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_hidden_ability(self):
         pass
 
     @abstractmethod

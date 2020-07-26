@@ -1,13 +1,13 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
-from pokemon_dex_entries.abstract_pokedex_entry_parser_strategy_form import AbstractPokedexEntryParserStrategyForm
-from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
+from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_strategy_bulbapedia_base import \
+    PokedexEntryParserPokemonStrategyBulbapediaBase
 
 
-class PokedexEntryParserPokemonStrategyBulbapediaForm(AbstractPokedexEntryParserStrategyForm):
+class PokedexEntryParserPokemonStrategyBulbapediaForm(PokedexEntryParserPokemonStrategyBulbapediaBase):
 
     def __init__(self, infobox_dict: dict, form_id: int):
-        self.infobox_dict = infobox_dict
+        super().__init__(infobox_dict)
         self.form_id = form_id
 
     def parse_pokemon_form_name(self):
@@ -18,98 +18,88 @@ class PokedexEntryParserPokemonStrategyBulbapediaForm(AbstractPokedexEntryParser
         """
         key = "form{form_id}".format(form_id=self.form_id.__str__())
 
+        # Not using super().parse_pokemon_form_name here since the base value actually has 2 options depending
+        #   if the base form has a different name to begin with
         return self.infobox_dict[key]
 
     def parse_pokemon_types(self):
-        # TODO: Zorg dat je hier gwn de super kunt gebruiken als de key niet bestaat, is nu een mess
         # Grab the Pokémon type(s), found inside the infobox dict
         # keys: "form{form_id}type1" and optionally "form{form_id}type2"
-        # Returns None if the form has no type difference with it's primary form
         # Returns [] with type1(str) and type2(str) or None
+        # Returns [] with the base values (str type1, type2) through super() if the form has no different typing
+        #   from the base form
         form_primary_type_key = "form{}type1".format(self.form_id.__str__())
         form_secondary_type_key = "form{}type2".format(self.form_id.__str__())
 
-        if form_primary_type_key in self.infobox_dict:
-            form_primary_type = ENGLISH_TO_DUTCH_TYPE[self.infobox_dict["form_primary_type_key"].lower()]
-            if form_secondary_type_key in self.infobox_dict:
-                form_secondary_type = ENGLISH_TO_DUTCH_TYPE[self.infobox_dict["form_secondary_type_key"].lower()]
-                return [form_primary_type, form_secondary_type]
-            else:
-                return [form_primary_type, None]
-        else:
-            primary_type = ENGLISH_TO_DUTCH_TYPE[self.infobox_dict["type1"].lower()]
-            if "type2" in self.infobox_dict:
-                secondary_type = ENGLISH_TO_DUTCH_TYPE[self.infobox_dict["type2"].lower()]
-                return [primary_type, secondary_type]
-            else:
-                return [primary_type, None]
+        form_types = super().parse_pokemon_types(primary_key=form_primary_type_key,
+                                                 secondary_key=form_secondary_type_key)
+
+        if form_types:
+            return form_types
+        return super().parse_pokemon_types()
 
     def parse_pokemon_abilities(self):
         # Grab the Pokémon abilities, found inside the infobox dict
-        # Key(s): "ability{form_id}-{n}"
-        # Returns None if no abilities different from the primary form
-        # Returns list of abilities otherwise
+        # Key: "ability{form_id}-{n}"
+        # Returns [] of abilities
+        # Returns [] of base form abilities through super() if no abilities different from the base form
 
-        form_abilities = []
+        ability_key = "ability{}".format(self.form_id.__str__())
+        form_ability_key = ability_key + "-{}"
 
-        searching = True
-        n = 1
+        form_abilities = super().parse_pokemon_abilities(ability_key=form_ability_key)
 
-        while searching:
-            key = "ability{form_id}-{n}".format(form_id=self.form_id.__str__(), n=n.__str__())
-            if key in self.infobox_dict:
-                form_abilities.append(self.infobox_dict[key])
-                n += 1
-            else:
-                searching = False
-        if form_abilities:
-            return form_abilities
-        else:
-            return None
+        return form_abilities if form_abilities else super().parse_pokemon_abilities()
+
+    def parse_pokemon_hidden_ability(self):
+        # Grab the Pokémon hidden ability (if it has one), found inside the infobox dict
+        # key: "abilityd{form_id}"
+        # Returns hidden ability: str or None if the form has no hidden ability
+
+        form_hidden_ability_key = "abilityd{form_id}".format(form_id=self.form_id.__str__())
+
+        return super().parse_pokemon_hidden_ability(hidden_ability_key=form_hidden_ability_key)
 
     def parse_pokemon_met_height(self):
         # Grab the Pokémon height in meters
         # key: "height-m{form_id}"
         # Returns height(str) if found, else returns None
 
-        key = "height-m{form_id}".format(form_id=self.form_id.__str__())
-        base_key = "height-m"
+        form_metric_height_key = "height-m{form_id}".format(form_id=self.form_id.__str__())
 
-        return self._if_key_found_return_else_base_or_none(key, base_key)
+        height = super().parse_pokemon_met_height(metric_height_key=form_metric_height_key)
+
+        return height if height else super().parse_pokemon_met_height()
 
     def parse_pokemon_met_weight(self):
         # Grab the Pokémon height in meters
         # key: "weight-kg{form_id}"
         # Returns weight(str) if found, else returns None
 
-        key = "weight-kg{form_id}".format(form_id=self.form_id.__str__())
-        base_key = "weight-kg"
+        form_metric_weight_key = "weight-kg{form_id}".format(form_id=self.form_id.__str__())
 
-        return self._if_key_found_return_else_base_or_none(key, base_key)
+        weight = super().parse_pokemon_met_weight(metric_weight_key=form_metric_weight_key)
+
+        return weight if weight else super().parse_pokemon_met_weight()
 
     def parse_pokemon_imp_height(self):
         # Grab the Pokémon height in meters
         # key: "height-ftin{form_id}"
         # Returns height(str) if found, else returns None
 
-        key = "height-ftin{form_id}".format(form_id=self.form_id.__str__())
-        base_key = "weight-kg"
+        form_imperial_height_key = "height-ftin{form_id}".format(form_id=self.form_id.__str__())
 
-        return self._if_key_found_return_else_base_or_none(key, base_key)
+        height = super().parse_pokemon_imp_height(imperial_height_key=form_imperial_height_key)
+
+        return height if height else super().parse_pokemon_imp_height()
 
     def parse_pokemon_imp_weight(self):
         # Grab the Pokémon height in meters
         # key: "weight-lbs{form_id}"
         # Returns weight(str) if found, else returns None
 
-        key = "weight-lbs{form_id}".format(form_id=self.form_id.__str__())
-        base_key = "weight-lbs"
+        form_imperial_height_key = "weight-lbs{form_id}".format(form_id=self.form_id.__str__())
 
-        return self._if_key_found_return_else_base_or_none(key, base_key)
+        weight = super().parse_pokemon_imp_weight(imperial_weight_key=form_imperial_height_key)
 
-    def _if_key_found_return_else_base_or_none(self, key, base_key):
-        if key in self.infobox_dict:
-            return self.infobox_dict[key]
-        elif base_key in self.infobox_dict:
-            return self.infobox_dict[base_key]
-        return None
+        return weight if weight else super().parse_pokemon_imp_weight()

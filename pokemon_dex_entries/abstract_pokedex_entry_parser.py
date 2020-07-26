@@ -81,9 +81,8 @@ class AbstractPokedexEntryParser(abc.ABC):
     def parse_pokemon_abilities(self):
         return self._form_strategy.parse_pokemon_abilities()
 
-    @abstractmethod
     def parse_pokemon_hidden_ability(self):
-        pass
+        return self._form_strategy.parse_pokemon_hidden_ability()
 
     @abstractmethod
     def parse_pokemon_national_dex_number(self):

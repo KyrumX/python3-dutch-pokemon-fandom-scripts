@@ -1,5 +1,7 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
+from string import ascii_uppercase
+
 from utils.evolution_line import EvolutionLine
 
 
@@ -276,8 +278,9 @@ class PokedexEntry:
         # Abilities
         wiki_entry += self._build_abilities()
 
-        # Hidden ability
-        wiki_entry += self._build_hidden_ability()
+        # Hidden ability (if applicable)
+        if self.hidden_ability:
+            wiki_entry += self._build_hidden_ability()
 
         # Gender (if applicable)
         if self.percent_male:
@@ -313,10 +316,15 @@ class PokedexEntry:
         wiki_entry += self._create_dutch_wiki_entry()
 
         # Add forms
+
+        # Forms cannot have the same ndex on the Dutch Fandom, we append a letter to the ndex string starting with
+        #   the letter B for the first form, e.g. Giratina (altered form/base) is 487, Giratina (Origin Form) is
+        #   487B.
+        n_ndex_suffix = 1
+
         for form in self.forms:
 
             # Add delimiter
-            # TODO: Fix NDEX number
             wiki_entry += self.delimiter_multi_forms
             form_entry = PokedexEntry(
                 self.name,
@@ -327,8 +335,8 @@ class PokedexEntry:
                 form["type"][0],
                 form["type"][1],
                 form["ability"],
-                self.hidden_ability,
-                self.ndex_num,
+                form["h_ability"],
+                self.ndex_num + ascii_uppercase[n_ndex_suffix],
                 self.ndex_next,
                 self.ndex_prev,
                 self.evo_line,
@@ -345,6 +353,9 @@ class PokedexEntry:
 
             # Build the form data
             wiki_entry += form_entry.create_dutch_wiki_entry()
+
+            # Go to the next letter (no need to check bounds, since no Pokémon has more than 25 forms)
+            n_ndex_suffix += 1
 
         # Add suffix
         wiki_entry += self.suffix_multi_forms

@@ -22,7 +22,6 @@ class PokedexEntryBulbapedia:
         dex_entry = parser_base.build_pokedex_entry()
 
         # Generate seperate forms if applicable:
-
         if forms:
             parsed_forms = []
             for form_id in forms:
@@ -35,7 +34,9 @@ class PokedexEntryBulbapedia:
             # Add the forms to the Pokedex Entry:
             dex_entry.add_forms(parsed_forms)
 
-        # Generate the output for Fandom
-        output = dex_entry.create_dutch_wiki_entry()
+        self.dex_entry = dex_entry
 
-        print(output)
+    def build_template(self):
+        # Generate the output for Fandom
+        return self.dex_entry.create_dutch_wiki_entry()
+
