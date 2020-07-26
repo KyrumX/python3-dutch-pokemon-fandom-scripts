@@ -1,17 +1,21 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
+from string import ascii_uppercase
+
 from utils.evolution_line import EvolutionLine
 
 
 class PokedexEntry:
-
-    # TODO: FIX EVOLUTION LINE PARSING
-
     prefix = "{{PokémonInfobox\n"
     suffix = "}}"
 
+    prefix_multi_forms = """<div align="right"><tabber>\n"""
+    delimiter_multi_forms = "|-|\n"
+    suffix_multi_forms = "</tabber></div>"
+
     def __init__(self,
-                 name:  str,
+                 name: str,
+                 form_name: str,
                  japanse_name: str,
                  generation: str,
                  species: str,
@@ -30,6 +34,7 @@ class PokedexEntry:
                  imp_weight: float,
                  egg_groups: list):
         self.name = name
+        self.form_name = form_name
         self.japanese_name = japanse_name
         self.generation = generation
         self.species = species
@@ -47,12 +52,22 @@ class PokedexEntry:
         self.imp_height = imp_height
         self.imp_weight = imp_weight
         self.egg_groups = egg_groups
+        self.forms = []
+
+    def add_forms(self, forms: list):
+        self.forms = self.forms + forms
 
     def _build_name(self):
         # Key: naam
         # Value: provided: str - Required: str
         name_entry = "| naam        = {}\n".format(self.name)
         return name_entry
+
+    def build_form_name(self):
+        # Format: {form_name}=\n
+        # Value: provided: str - Required: str
+        form_name_entry = "{}=\n".format(self.form_name)
+        return form_name_entry
 
     def _build_japanese_name(self):
         # Key: jnaam
@@ -208,8 +223,13 @@ class PokedexEntry:
         evo_line_dex_entry += "\n"
         return evo_line_dex_entry
 
-
     def create_dutch_wiki_entry(self):
+
+        if self.forms:
+            return self._create_dutch_wiki_entry_forms()
+        return self._create_dutch_wiki_entry()
+
+    def _create_dutch_wiki_entry(self):
 
         wiki_entry = ""
 
@@ -258,8 +278,9 @@ class PokedexEntry:
         # Abilities
         wiki_entry += self._build_abilities()
 
-        # Hidden ability
-        wiki_entry += self._build_hidden_ability()
+        # Hidden ability (if applicable)
+        if self.hidden_ability:
+            wiki_entry += self._build_hidden_ability()
 
         # Gender (if applicable)
         if self.percent_male:
@@ -278,5 +299,65 @@ class PokedexEntry:
 
         # And add the suffix
         wiki_entry += self.suffix
+
+        return wiki_entry
+
+    def _create_dutch_wiki_entry_forms(self):
+
+        wiki_entry = ""
+
+        # Add the tabber
+        wiki_entry += self.prefix_multi_forms
+
+        # Add the form name
+        wiki_entry += self.build_form_name()
+
+        # Add the base form
+        wiki_entry += self._create_dutch_wiki_entry()
+
+        # Add forms
+
+        # Forms cannot have the same ndex on the Dutch Fandom, we append a letter to the ndex string starting with
+        #   the letter B for the first form, e.g. Giratina (altered form/base) is 487, Giratina (Origin Form) is
+        #   487B.
+        n_ndex_suffix = 1
+
+        for form in self.forms:
+
+            # Add delimiter
+            wiki_entry += self.delimiter_multi_forms
+            form_entry = PokedexEntry(
+                self.name,
+                form["form"],
+                self.japanese_name,
+                self.generation,
+                self.species,
+                form["type"][0],
+                form["type"][1],
+                form["ability"],
+                form["h_ability"],
+                self.ndex_num + ascii_uppercase[n_ndex_suffix],
+                self.ndex_next,
+                self.ndex_prev,
+                self.evo_line,
+                self.percent_male,
+                form["met_height"],
+                form["met_weight"],
+                form["imp_height"],
+                form["imp_weight"],
+                self.egg_groups
+            )
+
+            # Add next form name
+            wiki_entry += form_entry.build_form_name()
+
+            # Build the form data
+            wiki_entry += form_entry.create_dutch_wiki_entry()
+
+            # Go to the next letter (no need to check bounds, since no Pokémon has more than 25 forms)
+            n_ndex_suffix += 1
+
+        # Add suffix
+        wiki_entry += self.suffix_multi_forms
 
         return wiki_entry

@@ -1,7 +1,7 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
 
-from pokemon_dex_entries.pokedex_entry_parser import PokedexEntryParser
+from pokemon_dex_entries.pokedex_entry_scraper import PokedexEntryParser
 from utils.egg_groups_translation import ENGLISH_TO_DUTCH_EGG_GROUP
 from utils.gen_translation import ENGLISH_TO_DUTCH_GEN
 from utils.type_translation import ENGLISH_TO_DUTCH_TYPE

@@ -19,8 +19,7 @@ def main():
     scraper_class = EntryScraperFactory().create(source_type=args.type, url=args.url)
 
     try:
-        entry = scraper_class.build_pokedex_entry()
-        dutch_format = entry.create_dutch_wiki_entry()
+        dutch_format = scraper_class.build_template()
 
         text_file = open("output.txt", "w", encoding='utf8')
         text_file.write(dutch_format)

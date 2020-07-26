@@ -2,69 +2,26 @@
 #  All rights reserved.
 import re
 
-from pokemon_dex_entries.pokedex_entry_parser import PokedexEntryParser
+from pokemon_dex_entries.abstract_pokedex_entry_parser import AbstractPokedexEntryParser
+from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_strategy_bulbapedia_base import \
+    PokedexEntryParserPokemonStrategyBulbapediaBase
 from utils.color_translation import ENGLISH_TO_DUTCH_COLOR
 from utils.egg_groups_translation import ENGLISH_TO_DUTCH_EGG_GROUP
 from utils.evolution_line import EvolutionLine, EvolutionStep
 from utils.gen_translation import ENGLISH_TO_DUTCH_GEN
 from utils.gender_conversion import GENDER_DECIMAL_TO_MALE_PERCENTAGE
-from utils.list_to_dict import str_list_to_dict
 from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
 
 
-class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
-    """On the edit pages, Bulbapedia provides a structure we can use.
-    Almost all data we need can be found inside the infobox, which uses the following structure:
-        {{Pokémon Infobox
-        |name=Dragapult
-        |jname=ドラパルト
-        |jtranslit=Doraparuto
-        ...
-        }}
-    We grab this and convert it to a dict for our usage.
+class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
 
-    Other information we need: prev, next from the national dex, evolution
-    """
+    def __init__(self, infobox: dict, prev_next_dict: dict, raw_pokemon_evolution_lines: list):
+        super().__init__(strategy=PokedexEntryParserPokemonStrategyBulbapediaBase(infobox))
+        self.infobox_dict = infobox
+        self.prev_next_dict = prev_next_dict
+        self.raw_pokemon_evolution_lines = raw_pokemon_evolution_lines
 
-    def __init__(self, url: str):
-        super().__init__(url)
-
-        text_area_text = self.structured_object.find("textarea", class_="mw-editfont-default").text
-
-        # Grab the Pokémon info box and convert to a list
-        info_box_raw = text_area_text.partition("{{Pokémon Infobox")[2].partition("\'\'\'")[0].replace("\n", "")[:-2]
-        info_box = re.split(r'\|+(?![^{{]*}})', info_box_raw)
-
-        # Grab the Pokémon PrevNext box and convert to a list
-        prev_next_box = text_area_text.partition("{{PokémonPrevNext/Pokémon")[2].partition("}}")[0].split("|")
-
-        # To get the evolution line we need to get another part of the page.
-        #   This is found between ===Evolution=== and ===Forms=== or ===Sprites===
-
-        if "===Forms===" in text_area_text:
-            evolution_box = text_area_text.partition("===Evolution===")[2].partition("===Forms===")[0]
-        else:
-            evolution_box = text_area_text.partition("===Evolution===")[2].partition("===Sprites===")[0]
-
-        # So I couldn't get regex to work with dotall and \n\n (it would always see the entire object as one,
-        #   rather than finding multiple occurrences...), so dirty workaround I guess
-        evolution_box = evolution_box.replace("\n\n", "ENDHERE")
-        evolution_box = evolution_box.replace("\n", "")
-        evolution_box = evolution_box.replace("ENDHERE", "\n")
-
-        # For Gen VIII Sprites are commented out, replace it with a newline to make it match all previous gens (regex)
-        evolution_box = evolution_box.replace("<!--", "\n")
-
-        # Pattern to grab all evo boxes if there are multiple
-        regex_pattern_individual_evo_boxes = r"{{Evobox(.*)}}\n"
-
-        self.raw_pokemon_evolution_lines = re.findall(regex_pattern_individual_evo_boxes, evolution_box, re.IGNORECASE)
-
-        # Bulbapedia uses "=" to split between the key and value
-        self.infobox_dict = str_list_to_dict(info_box, "=")
-        self.prev_next_dict = str_list_to_dict(prev_next_box, "=")
-
-    def parse_pokemon_name(self):
+    def parse_pokemon_name(self, id = None):
         # Grab the Pokémon name, found inside the infobox dict
         # key: "name"
         return self.infobox_dict["name"]
@@ -79,42 +36,11 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         # key: "generation"
         return ENGLISH_TO_DUTCH_GEN[self.infobox_dict["generation"]]
 
-    def parse_pokemon_types(self):
-        # Grab the Pokémon type(s), found inside the infobox dict
-        # keys: "type1" and optionally "type2"
-        primary_type = self.infobox_dict["type1"]
-
-        if "type2" in self.infobox_dict:
-            secondary_type = self.infobox_dict["type2"]
-            return [ENGLISH_TO_DUTCH_TYPE[primary_type.lower()], ENGLISH_TO_DUTCH_TYPE[secondary_type.lower()]]
-        else:
-            return [ENGLISH_TO_DUTCH_TYPE[primary_type.lower()], None]
-
     def parse_pokemon_species(self):
         # Grab the Pokémon species, found inside the infobox dict
         # key: "category"
 
         return self.translator.translate(self.infobox_dict["category"], src="en", dest="nl").text.capitalize()
-
-    def parse_pokemon_abilities(self):
-        # Grab the Pokémon abilities, found inside the infobox dict
-        # All keys that contain "ability" except "abilityd", "abilitycold", "abilityn" and "abilitylayout"
-
-        abilities = []
-        excluded_keys = ["abilityd", "abilitycold", "abilitylayout", "abilityn"]
-
-        for key, value in self.infobox_dict.items():
-            if "ability" in key and key not in excluded_keys:
-                abilities.append(value)
-
-        return abilities
-
-    def parse_pokemon_hidden_ability(self):
-        # Grab the Pokémon hidden ability (if it has one), found inside the infobox dict
-        # key: "abilityd"
-
-        if "abilityd" in self.infobox_dict:
-            return self.infobox_dict["abilityd"]
 
     def parse_pokemon_national_dex_number(self):
         # Grab the Pokémon national dex number, found inside the infobox dict
@@ -176,7 +102,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
                 name_key = "name{}".format(i.__str__())
                 ndex_key = "no{}".format(i.__str__())
                 if name_key in evo_dict:
-                    evo_steps.append(EvolutionStep(evo_dict[name_key], evo_dict[ndex_key], evo_stage=i))
+                    evo_steps.append(EvolutionStep(evo_dict[name_key], re.findall(r'\d+', evo_dict[ndex_key])[0], evo_stage=i))
             parent = evo_steps.pop(0)
             current_parent = parent
             while evo_steps:
@@ -186,13 +112,13 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
             return EvolutionLine(parent)
         elif type == "one_split_two_path":
             child_a = EvolutionStep(pokemon_name=evo_dict["name2a"],
-                                    ndex=evo_dict["no2a"],
+                                    ndex=re.findall(r'\d+', evo_dict["no2a"])[0],
                                     evo_stage=2)
             child_b = EvolutionStep(pokemon_name=evo_dict["name2b"],
-                                    ndex=evo_dict["no2b"],
+                                    ndex=re.findall(r'\d+', evo_dict["no2b"])[0],
                                     evo_stage=2)
             parent = EvolutionStep(pokemon_name=evo_dict["name1"],
-                                   ndex=evo_dict["no1"],
+                                   ndex=re.findall(r'\d+', evo_dict["no1"])[0],
                                    evo_stage=1)
             parent.add_next(child_a)
             if not child_b.pokemon_name == child_a.pokemon_name:
@@ -285,26 +211,6 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         # key: "gendercode"
         return GENDER_DECIMAL_TO_MALE_PERCENTAGE[int(self.infobox_dict["gendercode"])]
 
-    def parse_pokemon_met_height(self) -> str:
-        # Grab the Pokémon height in meters
-        # key: "height-m"
-        return self.infobox_dict["height-m"]
-
-    def parse_pokemon_met_weight(self) -> str:
-        # Grab the Pokémon height in kilograms
-        # key: "weight-kg"
-        return self.infobox_dict["weight-kg"]
-
-    def parse_pokemon_imp_height(self) -> str:
-        # Grab the Pokémon height in float inch
-        # key: "height-ftin"
-        return self.infobox_dict["height-ftin"]
-
-    def parse_pokemon_imp_weight(self) -> str:
-        # Grab the Pokémon height in float inch
-        # key: "weight-lbs"
-        return self.infobox_dict["weight-lbs"]
-
     def parse_pokemon_dex_color(self):
         # Grab the Pokémon dex color
         # key: "color"
@@ -316,7 +222,7 @@ class PokedexEntryParserPokemonBulbapedia(PokedexEntryParser):
         egg_groups_n = int(self.infobox_dict["egggroupn"])
 
         if egg_groups_n == 0:
-            return ENGLISH_TO_DUTCH_EGG_GROUP["Undiscovered"]
+            return [ENGLISH_TO_DUTCH_EGG_GROUP["undiscovered"]]
         elif egg_groups_n == 1:
             return [ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup1"].lower()]]
         else:
