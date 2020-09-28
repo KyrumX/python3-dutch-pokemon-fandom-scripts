@@ -98,4 +98,13 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
             #   So we need to verify whether there are actually more forms if we remove form1.
             del pokemon_forms[1]
 
+        # There are multiple text partitions called 'Pokédex entries', we only care about the one in
+        #   the 'Game data' partition, the dex data is then found in the 'Pokédex entries' partition
+        game_data_partition = text_area_text.partition("==Game data==")[2].partition("==Trivia==")[0]
+        dex_partition = game_data_partition.partition("===Pokédex entries===")[2].partition("{{Dex/Footer}}")[0]
+        # Remove all newlines to make splitting more consistent (as bulbapedia sometimes uses \n followed by a space
+        dex_partition = dex_partition.replace('\n', '')
+        dex_partitions = dex_partition.split("|}|}")
+
+
         return infobox_dict, prev_next_dict, raw_pokemon_evolution_lines, pokemon_forms

@@ -211,11 +211,6 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
         # key: "gendercode"
         return GENDER_DECIMAL_TO_MALE_PERCENTAGE[int(self.infobox_dict["gendercode"])]
 
-    def parse_pokemon_dex_color(self):
-        # Grab the Pokémon dex color
-        # key: "color"
-        return ENGLISH_TO_DUTCH_COLOR[self.infobox_dict["color"].lower()]
-
     def parse_pokemon_egg_groups(self):
         # Grab the Pokémon egg group(s)
         # key: "egggroupn" for the amount, "egggroup1" and "egggroup2" (if n == 2)
@@ -228,4 +223,38 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
         else:
             return [ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup1"].lower()],
                     ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup2"].lower()]]
+
+    def parse_pokemon_dex_color(self):
+        # Grab the Pokémon dex color
+        # key: "color", given value is English with leading capital, e.g. Blue, required is Blauw
+        return ENGLISH_TO_DUTCH_COLOR[self.infobox_dict["color"].lower()]
+
+    def parse_pokemon_body(self):
+        # Grab the Pokémon body code
+        # key: "body"
+        return self.infobox_dict["body"]
+
+    def parse_pokemon_kanto_dex_number(self):
+        pass
+
+    def parse_pokemon_johto_dex_number(self):
+        pass
+
+    def parse_pokemon_hoenn_dex_number(self):
+        pass
+
+    def parse_pokemon_sinnoh_dex_number(self):
+        pass
+
+    def parse_pokemon_unova_dex_number(self):
+        pass
+
+    def parse_pokemon_kalos_dex_number(self):
+        pass
+
+    def parse_pokemon_alola_dex_number(self):
+        pass
+
+    def parse_pokemon_galar_dex_number(self):
+        pass
 

@@ -32,7 +32,17 @@ class PokedexEntry:
                  met_weight: float,
                  imp_height: float,
                  imp_weight: float,
-                 egg_groups: list):
+                 egg_groups: list,
+                 color: str,
+                 body: str,
+                 kanto_num: str,
+                 johto_num: str,
+                 hoenn_num: str,
+                 sinnoh_num: str,
+                 unova_num: str,
+                 kalos_num: str,
+                 alola_num: str,
+                 galar_num: str):
         self.name = name
         self.form_name = form_name
         self.japanese_name = japanse_name
@@ -53,6 +63,16 @@ class PokedexEntry:
         self.imp_weight = imp_weight
         self.egg_groups = egg_groups
         self.forms = []
+        self.color = color
+        self.body = body
+        self.kanto_num = kanto_num
+        self.johto_num = johto_num
+        self.hoenn_num = hoenn_num
+        self.sinnoh_num = sinnoh_num
+        self.unova_num = unova_num
+        self.kalos_num = kalos_num
+        self.alola_num = alola_num
+        self.galar_num = galar_num
 
     def add_forms(self, forms: list):
         self.forms = self.forms + forms
@@ -345,7 +365,17 @@ class PokedexEntry:
                 form["met_weight"],
                 form["imp_height"],
                 form["imp_weight"],
-                self.egg_groups
+                self.egg_groups,
+                self.color,
+                self.body,
+                self.kanto_num,
+                self.johto_num,
+                self.hoenn_num,
+                self.sinnoh_num,
+                self.unova_num,
+                self.kalos_num,
+                self.alola_num,
+                self.galar_num
             )
 
             # Add next form name
