@@ -135,10 +135,6 @@ class AbstractPokedexEntryParser(abc.ABC):
         pass
 
     @abstractmethod
-    def parse_pokemon_color(self):
-        pass
-
-    @abstractmethod
     def parse_pokemon_body(self):
         pass
 
