@@ -15,7 +15,7 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
         |jtranslit=Doraparuto
         ...
         }}
-    We grab this and convert it to a dict for our usage.Z
+    We grab this and convert it to a dict for our usage.
 
     Other information we need: prev, next from the national dex, evolution
     """

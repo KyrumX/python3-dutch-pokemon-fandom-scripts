@@ -86,7 +86,10 @@ class PokedexEntry:
     def build_form_name(self):
         # Format: {form_name}=\n
         # Value: provided: str - Required: str
-        form_name_entry = "{}=\n".format(self.form_name)
+        f_name = self.form_name
+        if f_name is None:
+            f_name = self.name
+        form_name_entry = "{}=\n".format(f_name)
         return form_name_entry
 
     def _build_japanese_name(self):
