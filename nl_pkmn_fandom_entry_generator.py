@@ -16,6 +16,7 @@ def main():
 
     args = parser.parse_args()
 
+    # scraper_class = EntryScraperFactory().create(source_type="bulbapedia", url="https://bulbapedia.bulbagarden.net/w/index.php?title=Pikachu_(Pok%C3%A9mon)&action=edit")
     scraper_class = EntryScraperFactory().create(source_type=args.type, url=args.url)
 
     try:

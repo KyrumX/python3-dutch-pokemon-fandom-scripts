@@ -10,16 +10,18 @@ from utils.egg_groups_translation import ENGLISH_TO_DUTCH_EGG_GROUP
 from utils.evolution_line import EvolutionLine, EvolutionStep
 from utils.gen_translation import ENGLISH_TO_DUTCH_GEN
 from utils.gender_conversion import GENDER_DECIMAL_TO_MALE_PERCENTAGE
-from utils.type_translation import ENGLISH_TO_DUTCH_TYPE
 
+# TODO: Right now, a lot of the conversion happens in this class, e.g. if we require string we will convert it to
+#  string here, it shouldn't be done here but rather in the PokedexEntry class.
 
 class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
 
-    def __init__(self, infobox: dict, prev_next_dict: dict, raw_pokemon_evolution_lines: list):
+    def __init__(self, infobox: dict, prev_next_dict: dict, raw_pokemon_evolution_lines: list, dex_data: dict):
         super().__init__(strategy=PokedexEntryParserPokemonStrategyBulbapediaBase(infobox))
         self.infobox_dict = infobox
         self.prev_next_dict = prev_next_dict
         self.raw_pokemon_evolution_lines = raw_pokemon_evolution_lines
+        self.dex_data = dex_data
 
     def parse_pokemon_name(self, id = None):
         # Grab the Pokémon name, found inside the infobox dict
@@ -211,11 +213,6 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
         # key: "gendercode"
         return GENDER_DECIMAL_TO_MALE_PERCENTAGE[int(self.infobox_dict["gendercode"])]
 
-    def parse_pokemon_dex_color(self):
-        # Grab the Pokémon dex color
-        # key: "color"
-        return ENGLISH_TO_DUTCH_COLOR[self.infobox_dict["color"].lower()]
-
     def parse_pokemon_egg_groups(self):
         # Grab the Pokémon egg group(s)
         # key: "egggroupn" for the amount, "egggroup1" and "egggroup2" (if n == 2)
@@ -229,3 +226,55 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
             return [ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup1"].lower()],
                     ENGLISH_TO_DUTCH_EGG_GROUP[self.infobox_dict["egggroup2"].lower()]]
 
+    def parse_pokemon_dex_color(self):
+        # Grab the Pokémon dex color
+        # key: "color", given value is English with leading capital, e.g. Blue, required is Blauw
+        return ENGLISH_TO_DUTCH_COLOR[self.infobox_dict["color"].lower()]
+
+    def parse_pokemon_body(self):
+        # Grab the Pokémon body code
+        # key: "body"
+        return self.infobox_dict["body"]
+
+    def parse_pokemon_kanto_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Kanto"
+        return self._parse_dex_numbers(key="Kanto")
+
+    def parse_pokemon_johto_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Johto"
+        return self._parse_dex_numbers(key="Johto")
+
+    def parse_pokemon_hoenn_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Hoenn"
+        return self._parse_dex_numbers(key="Hoenn")
+
+    def parse_pokemon_sinnoh_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Sinnoh"
+        return self._parse_dex_numbers(key="Sinnoh")
+
+    def parse_pokemon_unova_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Unova"
+        return self._parse_dex_numbers(key="Unova")
+
+    def parse_pokemon_kalos_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Kalos"
+        return self._parse_dex_numbers(key="Kalos")
+
+    def parse_pokemon_alola_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Alola"
+        return self._parse_dex_numbers(key="Alola")
+
+    def parse_pokemon_galar_dex_number(self):
+        # Grab the Kanto dex numbers, if applicable
+        # key: "Galar"
+        return self._parse_dex_numbers(key="Galar")
+
+    def _parse_dex_numbers(self, key):
+        return "/".join(self.dex_data[key]) if key in self.dex_data else None

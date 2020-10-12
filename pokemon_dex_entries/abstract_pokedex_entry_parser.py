@@ -53,7 +53,17 @@ class AbstractPokedexEntryParser(abc.ABC):
             self.parse_pokemon_met_weight(),
             self.parse_pokemon_imp_height(),
             self.parse_pokemon_imp_weight(),
-            self.parse_pokemon_egg_groups()
+            self.parse_pokemon_egg_groups(),
+            self.parse_pokemon_dex_color(),
+            self.parse_pokemon_body(),
+            self.parse_pokemon_kanto_dex_number(),
+            self.parse_pokemon_johto_dex_number(),
+            self.parse_pokemon_hoenn_dex_number(),
+            self.parse_pokemon_sinnoh_dex_number(),
+            self.parse_pokemon_unova_dex_number(),
+            self.parse_pokemon_kalos_dex_number(),
+            self.parse_pokemon_alola_dex_number(),
+            self.parse_pokemon_galar_dex_number()
         )
 
     @abstractmethod
@@ -122,4 +132,40 @@ class AbstractPokedexEntryParser(abc.ABC):
 
     @abstractmethod
     def parse_pokemon_egg_groups(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_body(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_kanto_dex_number(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_johto_dex_number(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_hoenn_dex_number(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_sinnoh_dex_number(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_unova_dex_number(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_kalos_dex_number(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_alola_dex_number(self):
+        pass
+
+    @abstractmethod
+    def parse_pokemon_galar_dex_number(self):
         pass
