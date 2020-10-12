@@ -10,14 +10,14 @@ def main():
     parser = argparse.ArgumentParser(description='Scrape a website and convert the data to a Pokémon entry using a '
                                                  'format usable by the Dutch Pokémon fandom/.')
 
-    # parser.add_argument('-url', action="store", help='Target url', required=True)
-    # parser.add_argument('-type', action="store", help='Source type of website being scraped, options', type=str,
-    #                     choices=["bulbapedia"], default="bulbapedia")
+    parser.add_argument('-url', action="store", help='Target url', required=True)
+    parser.add_argument('-type', action="store", help='Source type of website being scraped, options', type=str,
+                        choices=["bulbapedia"], default="bulbapedia")
 
     args = parser.parse_args()
 
-    scraper_class = EntryScraperFactory().create(source_type="bulbapedia", url="https://bulbapedia.bulbagarden.net/w/index.php?title=Butterfree_(Pok%C3%A9mon)&action=edit")
-    #scraper_class = EntryScraperFactory().create(source_type=args.type, url=args.url)
+    # scraper_class = EntryScraperFactory().create(source_type="bulbapedia", url="https://bulbapedia.bulbagarden.net/w/index.php?title=Pikachu_(Pok%C3%A9mon)&action=edit")
+    scraper_class = EntryScraperFactory().create(source_type=args.type, url=args.url)
 
     try:
         dutch_format = scraper_class.build_template()
