@@ -15,10 +15,10 @@ class PokedexEntryBulbapedia:
         scraper = PokedexEntryScraperPokemonBulbapedia(url)
 
         # Scrape the data
-        infobox_dict, ndex_dict, evolines, forms = scraper.generate_usable_data()
+        infobox_dict, ndex_dict, evolines, forms, dex_data = scraper.generate_usable_data()
 
         # Generate the base form:
-        parser_base = PokedexEntryParserPokemonStrategyBulbapedia(infobox_dict, ndex_dict, evolines)
+        parser_base = PokedexEntryParserPokemonStrategyBulbapedia(infobox_dict, ndex_dict, evolines, dex_data)
         dex_entry = parser_base.build_pokedex_entry()
 
         # Generate seperate forms if applicable:

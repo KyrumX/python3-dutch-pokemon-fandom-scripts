@@ -243,6 +243,65 @@ class PokedexEntry:
         evo_line_dex_entry += "\n"
         return evo_line_dex_entry
 
+    def _build_color(self):
+        # Key: kleur
+        # Value: provided: str - Required: str
+        color_entry = "| kleur       = {}\n".format(self.color)
+        return color_entry
+
+    def _build_body(self):
+        # Key: lichaam
+        # Value: provided: str - Required: str
+        body_entry = "| lichaam     = {}\n".format(self.body)
+        return body_entry
+
+    def _build_kanto_dex(self):
+        # Key: dexkanto
+        # Value: provided: str - Required: str
+        kanto_dex_num_entry = "| dexkanto    = {}\n".format(self.kanto_num)
+        return kanto_dex_num_entry
+
+    def _build_johto_dex(self):
+        # Key: dexjohto
+        # Value: provided: str - Required: str
+        johto_dex_num_entry = "| dexjohto    = {}\n".format(self.johto_num)
+        return johto_dex_num_entry
+
+    def _build_hoenn_dex(self):
+        # Key: dexhoenn
+        # Value: provided: str - Required: str
+        hoenn_dex_num_entry = "| dexhoenn    = {}\n".format(self.hoenn_num)
+        return hoenn_dex_num_entry
+
+    def _build_sinnoh_dex(self):
+        # Key: dexsinnoh
+        # Value: provided: str - Required: str
+        sinnoh_dex_num_entry = "| dexsinnoh   = {}\n".format(self.sinnoh_num)
+        return sinnoh_dex_num_entry
+
+    def _build_unova_dex(self):
+        # Key: dexunova
+        # Value: provided: str - Required: str
+        unova_dex_num_entry = "| dexunova    = {}\n".format(self.unova_num)
+        return unova_dex_num_entry
+
+    def _build_kalos_dex(self):
+        # The Kalos dex is divided into smaller parts, e.g. Central, Mountain, etc.
+        # TODO: ADD THIS
+        raise NotImplementedError()
+
+    def _build_alola_dex(self):
+        # Key: dexalola
+        # Value: provided: str - Required: str
+        alola_dex_num_entry = "| dexalola    = {}\n".format(self.alola_num)
+        return alola_dex_num_entry
+
+    def _build_galar_dex(self):
+        # Key: dexgalar
+        # Value: provided: str - Required: str
+        galar_dex_num_entry = "| dexgalar    = {}\n".format(self.galar_num)
+        return galar_dex_num_entry
+
     def create_dutch_wiki_entry(self):
 
         if self.forms:
@@ -286,6 +345,22 @@ class PokedexEntry:
         if self.type2:
             wiki_entry += self._build_secondary_type()
 
+        # Add regional dex numbers, when applicable
+        if self.kanto_num:
+            wiki_entry += self._build_kanto_dex()
+        if self.johto_num:
+            wiki_entry += self._build_johto_dex()
+        if self.hoenn_num:
+            wiki_entry += self._build_hoenn_dex()
+        if self.sinnoh_num:
+            wiki_entry += self._build_sinnoh_dex()
+        if self.unova_num:
+            wiki_entry += self._build_unova_dex()
+        if self.alola_num:
+            wiki_entry += self._build_alola_dex()
+        if self.galar_num:
+            wiki_entry += self._build_galar_dex()
+
         # Add metric weight
         wiki_entry += self._build_metric_weight()
         # Add metric height
@@ -294,6 +369,12 @@ class PokedexEntry:
         wiki_entry += self._build_imperial_weight()
         # Add imperial height
         wiki_entry += self._build_imperial_length()
+
+        # Add body
+        wiki_entry += self._build_body()
+
+        # Add color
+        wiki_entry += self._build_color()
 
         # Abilities
         wiki_entry += self._build_abilities()

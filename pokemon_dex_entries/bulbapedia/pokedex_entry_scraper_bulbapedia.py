@@ -15,7 +15,7 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
         |jtranslit=Doraparuto
         ...
         }}
-    We grab this and convert it to a dict for our usage.
+    We grab this and convert it to a dict for our usage.Z
 
     Other information we need: prev, next from the national dex, evolution
     """
@@ -108,7 +108,7 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
 
         local_dex = self._extract_local_dex_data(dex_partition)
 
-        return infobox_dict, prev_next_dict, raw_pokemon_evolution_lines, pokemon_forms
+        return infobox_dict, prev_next_dict, raw_pokemon_evolution_lines, pokemon_forms, local_dex
 
     @staticmethod
     def _extract_local_dex_data(local_data_entries):
@@ -148,7 +148,8 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
 
                     # If num_regex_search is not None, then a local dex num has been found
                     if num_regex_search:
-                        if region in results:
+                        num = num_regex_search.group(1)
+                        if region in results and num not in results[region]:
                             results[region].append(num_regex_search.group(1))
                         else:
                             results[region] = [num_regex_search.group(1)]
