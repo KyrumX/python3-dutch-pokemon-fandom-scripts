@@ -5,5 +5,5 @@ idna==2.9
 requests==2.23.0
 soupsieve==2.0
 urllib3==1.25.8
-googletrans==2.4.0
+googletrans==4.0.0-rc1
 regex==2020.5.14
