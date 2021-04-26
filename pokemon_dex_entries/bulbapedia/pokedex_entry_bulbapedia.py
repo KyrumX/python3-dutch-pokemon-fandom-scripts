@@ -1,5 +1,6 @@
 #  Copyright (c) 2020 Aaron Beetstra
 #  All rights reserved.
+from pokemon_dex_entries.abstract_pokedex_entry import AbstractPokedexEntry
 from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_bulbapedia import \
     PokedexEntryParserPokemonStrategyBulbapedia
 from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_strategy_bulbapedia_form import \
@@ -7,12 +8,16 @@ from pokemon_dex_entries.bulbapedia.pokedex_entry_parser_strategy_bulbapedia_for
 from pokemon_dex_entries.bulbapedia.pokedex_entry_scraper_bulbapedia import PokedexEntryScraperPokemonBulbapedia
 
 
-class PokedexEntryBulbapedia:
+class PokedexEntryBulbapedia(AbstractPokedexEntry):
 
     def __init__(self, url: str):
 
+        self.url = url
+
+    def setup(self):
+
         # Setup scraper:
-        scraper = PokedexEntryScraperPokemonBulbapedia(url)
+        scraper = PokedexEntryScraperPokemonBulbapedia(self.url)
 
         # Scrape the data
         infobox_dict, ndex_dict, evolines, forms, dex_data = scraper.generate_usable_data()
