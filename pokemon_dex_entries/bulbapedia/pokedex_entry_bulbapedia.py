@@ -21,7 +21,7 @@ class PokedexEntryBulbapedia:
         parser_base = PokedexEntryParserPokemonStrategyBulbapedia(infobox_dict, ndex_dict, evolines, dex_data)
         dex_entry = parser_base.build_pokedex_entry()
 
-        # Generate seperate forms if applicable:
+        # Generate separate forms if applicable:
         if forms:
             parsed_forms = []
             for form_id in forms:
