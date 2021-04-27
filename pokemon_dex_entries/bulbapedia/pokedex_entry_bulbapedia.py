@@ -19,6 +19,9 @@ class PokedexEntryBulbapedia(AbstractPokedexEntry):
         # Setup scraper:
         scraper = PokedexEntryScraperPokemonBulbapedia(self.url)
 
+        # Request the data
+        scraper.get_structured_object()
+
         # Scrape the data
         infobox_dict, ndex_dict, evolines, forms, dex_data = scraper.generate_usable_data()
 
