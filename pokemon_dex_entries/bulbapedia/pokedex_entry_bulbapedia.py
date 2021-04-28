@@ -12,6 +12,7 @@ class PokedexEntryBulbapedia(AbstractPokedexEntry):
 
     def __init__(self, url: str):
 
+        super().__init__()
         self.url = url
 
     def setup(self):

@@ -10,6 +10,9 @@ class AbstractPokedexEntry(abc.ABC):
     Used to define the source for our template
     """
 
+    def __init__(self):
+        self.dex_entry = None
+
     @abc.abstractmethod
     def setup(self):
         pass
