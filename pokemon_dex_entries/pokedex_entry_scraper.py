@@ -15,7 +15,7 @@ class PokedexEntryScraper(abc.ABC):
 
     def get_structured_object(self):
         request = requests.get(self.url)
-        self.structured_object = BeautifulSoup(request.text, 'html.parser')
+        self.structured_object = BeautifulSoup(request.text, "html.parser")
 
     @abc.abstractmethod
     def generate_usable_data(self):

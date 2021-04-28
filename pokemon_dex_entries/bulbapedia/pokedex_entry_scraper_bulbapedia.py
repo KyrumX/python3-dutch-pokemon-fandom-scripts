@@ -45,7 +45,7 @@ class PokedexEntryScraperPokemonBulbapedia(PokedexEntryScraper):
         :returns infobox, the ndex prev/next box, and raw evolution lines
         :type dict, dict, list
         """
-        text_area_text = self.structured_object.find("textarea", class_="mw-editfont-default").text
+        text_area_text = self.structured_object.find("textarea", id="wpTextbox1").text
 
         # Grab the Pokémon info box and convert to a list
         info_box_raw = text_area_text.partition("{{Pokémon Infobox")[2].partition("\'\'\'")[0].replace("\n", "")[:-2]
