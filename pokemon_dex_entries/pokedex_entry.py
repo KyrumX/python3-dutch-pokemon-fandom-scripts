@@ -203,20 +203,21 @@ class PokedexEntry:
     def _build_evo_in(self):
         # Key: evoin
         # Value: provided: str - Required: str
-        # Example: [[Raichu]] or when multiple: [[Flapple]]<br />[[Appletun]]
+        # Example: Raichu or when multiple: [[Flapple]]<br />[[Appletun]]
+        #   Due to the setup on our Fandom, single mons don't require the '[[' & ']]'
         current_step = EvolutionLine.find_evolution_step(self.evo_line.first, self.name)
         evo_in = current_step.next
 
         if evo_in:
             evo_in_dex_entry = "| evoin       = "
-            if type(evo_in) is list:
+            if len(evo_in) > 1:
                 for i in range(len(evo_in)):
                     evo_in_dex_entry += "[[{}]]".format(evo_in[i].pokemon_name)
 
                     if i + 1 < len(evo_in):
                         evo_in_dex_entry += "<br />"
             else:
-                evo_in_dex_entry += "[[{}]]".format(evo_in.pokemon_name)
+                evo_in_dex_entry += "{}".format(evo_in[0].pokemon_name)
             evo_in_dex_entry += "\n"
             return evo_in_dex_entry
         return ""
