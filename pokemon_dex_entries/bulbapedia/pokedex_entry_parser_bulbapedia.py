@@ -88,17 +88,23 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
         # Detect which path type we are dealing with
         list_of_keys = list(evo_dict.keys())
 
-        type = "normal"
+        evo_line_type = "normal"
 
         # one_split_two_two_path?
         if set(one_split_two_two_path).issubset(list_of_keys):
-            type = "one_split_two_two_path"
+            evo_line_type = "one_split_two_two_path"
         elif set(one_one_split_two_path).issubset(list_of_keys):
-            type = "one_one_split_two_path"
+            evo_line_type = "one_one_split_two_path"
         elif set(one_split_two_path).issubset(list_of_keys):
-            type = "one_split_two_path"
+            # Some Pokémon have split evolution lines but don't actually evolve into different Pokémon
+            #   rather, they just evolve into different forms of the same Pokémon,
+            #   like Toxel, Bulbapedia defines it as as split evolution because Toxel evolves into a different
+            #   form of Toxtricity, but the evolution is still just Toxtricity, not 2 different Pokémon.
+            #   To check for this case, check if name2a and name2b are the same or not.
+            if not evo_dict['name2a'] == evo_dict['name2b']:
+                evo_line_type = "one_split_two_path"
 
-        if type == "normal":
+        if evo_line_type == "normal":
             evo_steps = []
             for i in range(1, 5):
                 name_key = "name{}".format(i.__str__())
@@ -112,7 +118,7 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
                 current_parent.add_next(temp)
                 current_parent = temp
             return EvolutionLine(parent)
-        elif type == "one_split_two_path":
+        elif evo_line_type == "one_split_two_path":
             child_a = EvolutionStep(pokemon_name=evo_dict["name2a"],
                                     ndex=re.findall(r'\d+', evo_dict["no2a"])[0],
                                     evo_stage=2)
@@ -126,7 +132,7 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
             if not child_b.pokemon_name == child_a.pokemon_name:
                 parent.add_next(child_b)
             return EvolutionLine(parent)
-        elif type == "one_one_split_two_path":
+        elif evo_line_type == "one_one_split_two_path":
             # TODO: Remove some duplicated code between one_one_split_two and one_two_two.
             parent = EvolutionStep(pokemon_name=evo_dict["name1"],
                                    ndex=re.findall(r'\d+', evo_dict["sprite1"])[0],  # Extract the ndex: 703Name
@@ -144,7 +150,7 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
             child.add_next(child_child_b)
             parent.add_next(child)
             return EvolutionLine(parent)
-        elif type == "one_split_two_two_path":
+        elif evo_line_type == "one_split_two_two_path":
             parent = EvolutionStep(pokemon_name=evo_dict["name1"],
                                    ndex=re.findall(r'\d+', evo_dict["sprite1"])[0],  # Extract the ndex: 703Name
                                    evo_stage=1)
