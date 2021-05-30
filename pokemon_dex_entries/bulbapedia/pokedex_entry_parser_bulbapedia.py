@@ -101,8 +101,17 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
             #   like Toxel, Bulbapedia defines it as as split evolution because Toxel evolves into a different
             #   form of Toxtricity, but the evolution is still just Toxtricity, not 2 different Pokémon.
             #   To check for this case, check if name2a and name2b are the same or not.
+            #   Furthermore, add a name2 key and a no2 key.
             if not evo_dict['name2a'] == evo_dict['name2b']:
                 evo_line_type = "one_split_two_path"
+            else:
+                # Add a name2 (and no2) key to the evo_dict, to prevent having another if statement down the line
+                #   We need to do this since 'normal' evo paths use name1, name2, name3 as keys, not name2a, etc.
+                #   We can just grab the name2 value from name2a, the no2 value needs to be extracted from the
+                #   art2a key, since that is the only place where it is available (not sure why they just not use
+                #   no2a or no2b but whatever).
+                evo_dict['name2'] = evo_dict['name2a']
+                evo_dict['no2'] = re.findall(r'\d+', evo_dict["art2a"])[0]
 
         if evo_line_type == "normal":
             evo_steps = []
@@ -184,7 +193,8 @@ class PokedexEntryParserPokemonStrategyBulbapedia(AbstractPokedexEntryParser):
 
         # First create a usable format, we only need the names from the infobox, put them in a dict:
         raw_evo_lines = []
-        needed_keys = ["name{}", "name{}a", "name{}b", "sprite{}", "sprite{}a", "sprite{}b", "no{}", "no{}a", "no{}b"]
+        needed_keys = ["name{}", "name{}a", "name{}b", "sprite{}", "sprite{}a", "sprite{}b", "no{}", "no{}a", "no{}b",
+                       "art{}a", "art{}b"]
         for raw_pokemon_evolution_line in self.raw_pokemon_evolution_lines:
             temp = raw_pokemon_evolution_line.split("|", 1)[1]
             dict = {}
